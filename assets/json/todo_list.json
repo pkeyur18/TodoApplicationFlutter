@@ -1,0 +1,151 @@
+[
+  {
+    "user": "keyur",
+    "image": "assets/images/keyur.jpg",
+    "todoList": [
+      {
+        "todoId": 1,
+        "todoType": "Personal",
+        "todoStartDate": "01-01-2021",
+        "todoEndDate": "01-01-2021",
+        "todoStartTime": "07:00 AM",
+        "todoEndTime": "08:00 AM",
+        "todoName": "Go jogging with Christin",
+        "completed": false,
+        "setReminder": true,
+        "reminderTime": "15",
+        "snooze": true
+      },
+      {
+        "todoId": 2,
+        "todoType": "Work",
+        "todoStartDate": "01-01-2021",
+        "todoEndDate": "01-01-2021",
+        "todoStartTime": "10:00 AM",
+        "todoEndTime": "11:00 AM",
+        "todoName": "Send project file",
+        "completed": false,
+        "setReminder": true,
+        "reminderTime": "15",
+        "snooze": true
+      },
+      {
+        "todoId": 3,
+        "todoType": "Meeting",
+        "todoStartDate": "01-01-2021",
+        "todoEndDate": "01-01-2021",
+        "todoStartTime": "12:00 PM",
+        "todoEndTime": "2:00 PM",
+        "todoName": "Meeting with client",
+        "completed": false,
+        "setReminder": true,
+        "reminderTime": "15",
+        "snooze": true
+      },
+      {
+        "todoId": 4,
+        "todoType": "Work",
+        "todoStartDate": "01-01-2021",
+        "todoEndDate": "01-01-2021",
+        "todoStartTime": "03:00 PM",
+        "todoEndTime": "04:00 PM",
+        "todoName": "Email client",
+        "completed": false,
+        "setReminder": true,
+        "reminderTime": "15",
+        "snooze": true
+      },
+      {
+        "todoId": 5,
+        "todoType": "Personal",
+        "todoStartDate": "01-02-2021",
+        "todoEndDate": "01-02-2021",
+        "todoStartTime": "07:00 AM",
+        "todoEndTime": "08:00 AM",
+        "todoName": "Morning yoga",
+        "completed": false,
+        "setReminder": true,
+        "reminderTime": "15",
+        "snooze": true
+      },
+      {
+        "todoId": 6,
+        "todoType": "Work",
+        "todoStartDate": "01-02-2021",
+        "todoEndDate": "01-02-2021",
+        "todoStartTime": "10:00 AM",
+        "todoEndTime": "11:00 AM",
+        "todoName": "Send project file",
+        "completed": false,
+        "setReminder": true,
+        "reminderTime": "15",
+        "snooze": true
+      },
+      {
+        "todoId": 7,
+        "todoType": "Meeting",
+        "todoStartDate": "01-02-2021",
+        "todoEndDate": "01-02-2021",
+        "todoStartTime": "3:00 PM",
+        "todoEndTime": "05:00 PM",
+        "todoName": "Meeting with client",
+        "completed": false,
+        "setReminder": true,
+        "reminderTime": "15",
+        "snooze": true
+      },
+      {
+        "todoId": 8,
+        "todoType": "Personal",
+        "todoStartDate": "01-03-2021",
+        "todoEndDate": "01-03-2021",
+        "todoStartTime": "07:00 AM",
+        "todoEndTime": "08:00 AM",
+        "todoName": "Go jogging with Christin",
+        "completed": false,
+        "setReminder": true,
+        "reminderTime": "15",
+        "snooze": true
+      },
+      {
+        "todoId": 9,
+        "todoType": "Personal",
+        "todoStartDate": "01-04-2021",
+        "todoEndDate": "01-04-2021",
+        "todoStartTime": "07:00 AM",
+        "todoEndTime": "08:00 AM",
+        "todoName": "Go jogging with Christin",
+        "completed": false,
+        "setReminder": true,
+        "reminderTime": "15",
+        "snooze": true
+      },
+      {
+        "todoId": 10,
+        "todoType": "Personal",
+        "todoStartDate": "01-04-2021",
+        "todoEndDate": "01-04-2021",
+        "todoStartTime": "07:00 AM",
+        "todoEndTime": "08:00 AM",
+        "todoName": "Go jogging with Christin",
+        "completed": false,
+        "setReminder": true,
+        "reminderTime": "15",
+        "snooze": true
+      },
+      {
+        "todoId": 11,
+        "todoType": "Personal",
+        "todoStartDate": "01-05-2021",
+        "todoEndDate": "01-05-2021",
+        "todoStartTime": "07:00 AM",
+        "todoEndTime": "08:00 AM",
+        "todoName": "Go jogging with Christin",
+        "completed": false,
+        "setReminder": true,
+        "reminderTime": "15",
+        "snooze": true
+      }
+    ]
+  }
+]
