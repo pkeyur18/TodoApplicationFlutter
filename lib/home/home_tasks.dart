@@ -32,7 +32,13 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
             child: Container(
               child: Column(children: [
                 _todayReminder(context),
-                _homeDashboard(context),
+                Container(
+                  child: Expanded(
+                    child: SingleChildScrollView(
+                      child: _homeDashboard(context),
+                    ),
+                  ),
+                ),
               ]),
             ),
           ),
@@ -94,18 +100,19 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
                 ],
               ),
             ),
-            new Expanded(
-              child: ListView.builder(
-                itemCount: myTodoList.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                      onTap: () {
-                        setState(() {});
-                      },
-                      child: CustomTodoTile(myTodoList[index]));
-                },
-              ),
-            ),
+            for (var data in myTodoList) CustomTodoTile(data),
+            // new Expanded(
+            //   child: ListView.builder(
+            //     itemCount: myTodoList.length,
+            //     itemBuilder: (context, index) {
+            //       return GestureDetector(
+            //           onTap: () {
+            //             setState(() {});
+            //           },
+            //           child: CustomTodoTile(myTodoList[index]));
+            //     },
+            //   ),
+            // ),
           ],
         ),
       ),
