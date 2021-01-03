@@ -32,11 +32,9 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
             child: Container(
               child: Column(children: [
                 _todayReminder(context),
-                Container(
-                  child: Expanded(
-                    child: SingleChildScrollView(
-                      child: _homeDashboard(context),
-                    ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: _homeDashboard(context),
                   ),
                 ),
               ]),
@@ -76,45 +74,31 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
   }
 
   Widget _homeDashboard(BuildContext context) {
-    return Expanded(
-      child: Container(
-        margin: EdgeInsets.only(
-          top: 18,
-          left: 18,
-          right: 18,
-        ),
-        child: Column(
-          children: [
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Today",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                      color: Color(0xFF8B87B3),
-                    ),
+    return Container(
+      margin: EdgeInsets.only(
+        top: 18,
+        left: 18,
+        right: 18,
+      ),
+      child: Column(
+        children: [
+          Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Today",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    color: Color(0xFF8B87B3),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            for (var data in myTodoList) CustomTodoTile(data),
-            // new Expanded(
-            //   child: ListView.builder(
-            //     itemCount: myTodoList.length,
-            //     itemBuilder: (context, index) {
-            //       return GestureDetector(
-            //           onTap: () {
-            //             setState(() {});
-            //           },
-            //           child: CustomTodoTile(myTodoList[index]));
-            //     },
-            //   ),
-            // ),
-          ],
-        ),
+          ),
+          for (var data in myTodoList) CustomTodoTile(data),
+        ],
       ),
     );
   }
