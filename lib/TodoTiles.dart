@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'model/my_tasks.dart';
 
 class CustomTodoTile extends StatefulWidget {
   final TodoTasksModel data;
+  final DateTime today = DateTime.now();
 
   CustomTodoTile(this.data);
 
@@ -87,7 +89,7 @@ class _CustomTodoTileState extends State<CustomTodoTile> {
                       left: 12,
                     ),
                     child: Text(
-                      widget.data.todoStartTime,
+                      _dateFormatter(),
                       style: TextStyle(
                         color: Color(0xFFC6C6C8),
                         fontWeight: FontWeight.w800,
@@ -134,5 +136,11 @@ class _CustomTodoTileState extends State<CustomTodoTile> {
         ),
       ],
     );
+  }
+
+  String _dateFormatter() {
+    var now = widget.data.todoStartDate;
+    String formattedTime = DateFormat('hh:mm a').format(now);
+    return formattedTime;
   }
 }
