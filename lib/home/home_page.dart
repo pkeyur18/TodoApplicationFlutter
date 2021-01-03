@@ -13,8 +13,39 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(_user, _subheading, _image).build(context),
-      body: CustomBody(),
+      appBar: AppBar(
+        elevation: 0,
+        toolbarHeight: 0,
+        toolbarOpacity: 0,
+      ),
+      body: Container(
+        child: Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomRight,
+                  end: Alignment.topLeft,
+                  colors: <Color>[
+                    Color(0xFF81C7F5),
+                    Color(0xFF3867D5),
+                  ],
+                ),
+              ),
+              child: CustomAppBar(_user, _subheading, _image).build(context),
+            ),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CustomBody(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
       bottomNavigationBar: CustomBottomBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: CustomFloatingButton(),

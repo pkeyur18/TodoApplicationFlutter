@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 
 import 'package:Todo/common/custom_appbar.dart';
+import 'package:Todo/TodoTiles.dart';
+import 'package:Todo/home_notification.dart';
 import '../common/custom_bottom_bar.dart';
 import 'package:Todo/common/floating_button.dart';
+import 'package:Todo/model/my_tasks.dart';
 
-class HomeTasksPage extends StatelessWidget {
-  final int _tasks = 1;
-  final String _user = "Keyur Patel";
-  final String _subheading = "Today you have ";
-  final String _image = "assets/images/keyur.jpg";
+class HomeTasksPage extends StatefulWidget {
+  @override
+  _HomeTasksPageState createState() => _HomeTasksPageState();
+}
 
-  final TextStyle _subHeadingStyles = TextStyle(
-    color: Colors.white,
-    fontSize: 13,
-    fontWeight: FontWeight.w500,
-  );
+class _HomeTasksPageState extends State<HomeTasksPage> {
+  int _tasks = myTodoList.length;
+  String _user = "Keyur Patel";
+  String _subheading = "Today you have ";
+  String _image = "assets/images/keyur.jpg";
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +28,14 @@ class HomeTasksPage extends StatelessWidget {
       ),
       body: SafeArea(
         child: Scaffold(
-          body: Column(children: [
-            todayReminder(context),
-          ]),
+          body: Container(
+            child: Container(
+              child: Column(children: [
+                _todayReminder(context),
+                _homeDashboard(context),
+              ]),
+            ),
+          ),
           bottomNavigationBar: CustomBottomBar(),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
@@ -38,105 +45,70 @@ class HomeTasksPage extends StatelessWidget {
     );
   }
 
-  Widget todayReminder(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Stack(
-          children: <Widget>[
+  Widget _todayReminder(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.bottomRight,
+          end: Alignment.topLeft,
+          colors: <Color>[
+            Color(0xFF81C7F5),
+            Color(0xFF3867D5),
+          ],
+        ),
+      ),
+      child: Container(
+        child: Column(
+          children: [
             CustomAppBar(_user, _subheading + "$_tasks tasks", _image)
                 .build(context),
+            HomeNotification().build(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _homeDashboard(BuildContext context) {
+    return Expanded(
+      child: Container(
+        margin: EdgeInsets.only(
+          top: 18,
+          left: 18,
+          right: 18,
+        ),
+        child: Column(
+          children: [
             Container(
-              color: Theme.of(context).primaryColor,
-              height: MediaQuery.of(context).size.height * 0.135,
-              width: MediaQuery.of(context).size.width,
-            ),
-            Opacity(
-              opacity: 0.25,
-              child: Container(
-                margin: EdgeInsets.only(
-                  left: 18,
-                  right: 18,
-                  top: 0,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  color: Color(0xFFFFFFFF),
-                ),
-                height: MediaQuery.of(context).size.height * 0.125,
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(
-                left: 36,
-                top: MediaQuery.of(context).size.height * 0.11 / 4,
-                right: 50,
-              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Today Reminder",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          "Meeting with client",
-                          style: _subHeadingStyles,
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          "1:00 PM",
-                          style: _subHeadingStyles,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    child: Image(
-                      width: 52.32,
-                      image: const AssetImage('assets/images/bell.png'),
+                  Text(
+                    "Today",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                      color: Color(0xFF8B87B3),
                     ),
                   ),
                 ],
               ),
             ),
-            Container(
-              margin: EdgeInsets.only(
-                top: 0,
-                right: 20,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    alignment: Alignment.topRight,
-                    icon: Icon(
-                      Icons.clear,
-                      color: Color(0xFFFFFFFF),
-                      size: 18,
-                    ),
-                  ),
-                ],
+            new Expanded(
+              child: ListView.builder(
+                itemCount: myTodoList.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                      onTap: () {
+                        setState(() {});
+                      },
+                      child: CustomTodoTile(myTodoList[index]));
+                },
               ),
             ),
           ],
         ),
-      ],
+      ),
     );
   }
 }
