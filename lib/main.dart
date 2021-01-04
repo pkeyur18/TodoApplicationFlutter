@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import './landing_page.dart';
-import 'package:Todo/home/home_tasks.dart';
+import 'package:Todo/home/home_page.dart';
 
 void main() => runApp(MyTodoApp());
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-import 'model/my_tasks.dart';
+import '../model/my_tasks.dart';
 
 class CustomTodoTile extends StatefulWidget {
   final TodoTasksModel data;

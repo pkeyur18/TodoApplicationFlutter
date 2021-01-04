@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 import 'package:Todo/common/custom_appbar.dart';
-import 'package:Todo/TodoTiles.dart';
-import 'package:Todo/home_notification.dart';
+import 'package:Todo/home/TodoTiles.dart';
+import 'package:Todo/home/home_notification.dart';
 import 'package:intl/intl.dart';
 import '../common/custom_bottom_bar.dart';
 import 'package:Todo/common/floating_button.dart';
 import 'package:Todo/model/my_tasks.dart';
 
-import '../custom_body.dart';
+import 'custom_body.dart';
 
 // ignore: must_be_immutable
 class HomeTasksPage extends StatefulWidget {
