@@ -8,6 +8,8 @@ import '../common/custom_bottom_bar.dart';
 import 'package:Todo/common/floating_button.dart';
 import 'package:Todo/model/my_tasks.dart';
 
+import '../custom_body.dart';
+
 // ignore: must_be_immutable
 class HomeTasksPage extends StatefulWidget {
   DateTime today = DateTime.now();
@@ -25,7 +27,7 @@ class HomeTasksPage extends StatefulWidget {
 }
 
 class _HomeTasksPageState extends State<HomeTasksPage> {
-  int _tasks = myTodoList.length;
+  int _tasks = 0;
   String _user = "Keyur Patel";
   String _subheading = "Today you have ";
   String _image = "assets/images/keyur.jpg";
@@ -99,6 +101,8 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
       }
     }
 
+    _tasks = widget.todayTasks.length;
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -111,11 +115,21 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
             child: Container(
               child: Column(children: [
                 _todayReminder(context),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: _homeDashboard(context),
-                  ),
-                ),
+                myTodoList.length > 0
+                    ? Expanded(
+                        child: SingleChildScrollView(
+                          child: _homeDashboard(context),
+                        ),
+                      )
+                    : Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            EmptyNotesBody(),
+                          ],
+                        ),
+                      ),
               ]),
             ),
           ),
@@ -143,8 +157,12 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
       child: Container(
         child: Column(
           children: [
-            CustomAppBar("Hi " + _user, _subheading + "$_tasks tasks", _image)
-                .build(context),
+            myTodoList.length > 0
+                ? CustomAppBar(
+                        "Hi " + _user, _subheading + "$_tasks tasks", _image)
+                    .build(context)
+                : CustomAppBar("Hi " + _user, _subheading + "no tasks", _image)
+                    .build(context),
             widget.hasTodayTask
                 ? HomeNotification(widget.latestTask, "Today Reminder")
                 : (widget.hasTomorrowTask

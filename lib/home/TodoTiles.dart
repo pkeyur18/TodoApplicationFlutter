@@ -140,15 +140,6 @@ class _CustomTodoTileState extends State<CustomTodoTile> {
             ],
           ),
         ),
-        actions: <Widget>[
-          IconSlideAction(
-            color: Color(0xFF),
-            closeOnTap: true,
-            foregroundColor: Color(0xFF39AA02),
-            icon: Icons.add_box,
-            onTap: () => _deleteTask(widget.data.todoId),
-          )
-        ],
         secondaryActions: <Widget>[
           IconSlideAction(
             color: Color(0xFF),

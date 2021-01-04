@@ -51,7 +51,7 @@ class LandingPage extends StatelessWidget {
               ),
               RaisedButton(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/homepagetasks');
+                  Navigator.pushReplacementNamed(context, '/homepage');
                 },
                 textColor: Colors.white,
                 color: Color(0xFF39AA02),

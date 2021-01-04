@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomBody extends StatelessWidget {
+class EmptyNotesBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(

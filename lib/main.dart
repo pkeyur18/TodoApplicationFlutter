@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import './landing_page.dart';
-import 'home/home_page.dart';
 import 'package:Todo/home/home_tasks.dart';
 
 void main() => runApp(MyTodoApp());
@@ -15,8 +14,7 @@ class MyTodoApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/landing': (context) => LandingPage(),
-        '/homepage': (context) => HomePage(),
-        '/homepagetasks': (context) => HomeTasksPage(),
+        '/homepage': (context) => HomeTasksPage(),
       },
       debugShowCheckedModeBanner: false,
       key: _scaffoldKey,
