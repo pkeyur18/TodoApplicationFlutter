@@ -28,24 +28,21 @@ class _HomeNotificationState extends State<HomeNotification> {
               left: 18,
               right: 18,
             ),
+            alignment: Alignment.center,
             child: Stack(
               children: <Widget>[
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.135,
+                  height: MediaQuery.of(context).size.height * 0.150,
                   width: MediaQuery.of(context).size.width,
                 ),
                 Opacity(
                   opacity: 0.25,
                   child: Container(
-                    margin: EdgeInsets.only(
-                      top: 10,
-                      bottom: 10,
-                    ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                       color: Color(0xFFFFFFFF),
                     ),
-                    height: MediaQuery.of(context).size.height * 0.125,
+                    height: MediaQuery.of(context).size.height * 0.135,
                   ),
                 ),
                 Container(
