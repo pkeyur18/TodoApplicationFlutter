@@ -20,7 +20,7 @@ class CustomFloatingButton extends StatelessWidget {
             ),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: Color(0xFFF456C3),
+                color: Color(0x50F456C3),
                 blurRadius: 20.0,
                 spreadRadius: 0.0,
                 offset: Offset(

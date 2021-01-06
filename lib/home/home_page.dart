@@ -386,7 +386,7 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
   Widget _customBottomBar() {
     return BottomNavigationBar(
       selectedItemColor: Colors.blue,
-      unselectedItemColor: Colors.black,
+      unselectedItemColor: Color(0xFFBEBEBE),
       currentIndex: widget._selectedIndex,
       onTap: _onItemTaped,
       items: const <BottomNavigationBarItem>[

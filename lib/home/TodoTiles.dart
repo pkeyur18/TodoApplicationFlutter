@@ -107,11 +107,18 @@ class _CustomTodoTileState extends State<CustomTodoTile> {
                         ),
                         child: Text(
                           widget.data.todoName,
-                          style: TextStyle(
-                            color: Color(0xFF554E8F),
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
-                          ),
+                          style: widget.data.completed
+                              ? TextStyle(
+                                  color: Color(0xFFD9D9D9),
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                  decoration: TextDecoration.lineThrough,
+                                )
+                              : TextStyle(
+                                  color: Color(0xFF554E8F),
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                ),
                         ),
                       ),
                     ],

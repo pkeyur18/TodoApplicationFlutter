@@ -15,8 +15,8 @@ class _TaskTilesState extends State<TaskTiles> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 180,
-      width: 175,
+      height: MediaQuery.of(context).size.height * 0.22,
+      width: MediaQuery.of(context).size.width * 0.44,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8)),
         boxShadow: [
