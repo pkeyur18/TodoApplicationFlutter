@@ -60,7 +60,9 @@ class _CustomTodoTileState extends State<CustomTodoTile> {
                                       ? Color(0xFFD10263)
                                       : (widget.data.todoType == "Study"
                                           ? Color(0xFF3044F2)
-                                          : Color(0xFFF29130))))),
+                                          : (widget.data.todoType == "Shopping"
+                                              ? Color(0xFFF29130)
+                                              : Color(0xFFF857C3)))))),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(8),
                             topLeft: Radius.circular(8),

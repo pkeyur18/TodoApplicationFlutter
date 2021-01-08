@@ -1,11 +1,12 @@
+import 'package:Todo/common/bottom_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 
 import 'package:Todo/home/task_tiles.dart';
 import 'package:Todo/common/custom_appbar.dart';
 import 'package:Todo/home/TodoTiles.dart';
 import 'package:Todo/home/home_notification.dart';
-import 'package:Todo/common/floating_button.dart';
 import 'package:Todo/model/my_tasks.dart';
 
 import 'custom_body.dart';
@@ -76,7 +77,7 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
           bottomNavigationBar: _customBottomBar(),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
-          floatingActionButton: CustomFloatingButton(),
+          floatingActionButton: OpenBottomSheet(),
         ),
       ),
     );
@@ -402,7 +403,7 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
     );
   }
 
-  _onItemTaped(int index) {
+  void _onItemTaped(int index) {
     setState(() {
       widget._selectedIndex = index;
     });
