@@ -8,6 +8,7 @@ import 'package:Todo/common/custom_appbar.dart';
 import 'package:Todo/home/TodoTiles.dart';
 import 'package:Todo/home/home_notification.dart';
 import 'package:Todo/model/my_tasks.dart';
+import 'package:provider/provider.dart';
 
 import 'custom_body.dart';
 
@@ -63,21 +64,24 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
         toolbarOpacity: 0,
       ),
       body: SafeArea(
-        child: Scaffold(
-          body: Container(
-            child: Container(
-              child: Column(
-                children: [
-                  _todayReminder(context),
-                  tabs[widget._selectedIndex],
-                ],
+        child: ChangeNotifierProvider(
+          create: (context) => TodoTasksProvider(),
+          child: Scaffold(
+            body: Container(
+              child: Container(
+                child: Column(
+                  children: [
+                    _todayReminder(context),
+                    tabs[widget._selectedIndex],
+                  ],
+                ),
               ),
             ),
+            bottomNavigationBar: _customBottomBar(),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            floatingActionButton: OpenBottomSheet(),
           ),
-          bottomNavigationBar: _customBottomBar(),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
-          floatingActionButton: OpenBottomSheet(),
         ),
       ),
     );
@@ -98,7 +102,7 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
       child: Container(
         child: Column(
           children: [
-            myTodoList.length > 0
+            TodoTasksProvider().myTodoList.length > 0
                 ? CustomAppBar(
                         "Hi " + _user, _subheading + "$_tasks tasks", _image)
                     .build(context)
@@ -120,105 +124,110 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
 
   Widget _homeDashboard() {
     _sortingTasks();
-    return myTodoList.length > 0
-        ? Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                margin: EdgeInsets.only(
-                  top: 18,
-                  left: 18,
-                  right: 18,
-                ),
-                child: Column(
-                  children: [
-                    widget.todayTasks.length > 0
-                        ? Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Today",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 14,
-                                    color: Color(0xFF8B87B3),
+    return TodoTasksProvider().myTodoList.length > 0
+        ? Consumer<TodoTasksProvider>(
+            builder: (context, value, child) => Expanded(
+              child: SingleChildScrollView(
+                child: Container(
+                  margin: EdgeInsets.only(
+                    top: 18,
+                    left: 18,
+                    right: 18,
+                  ),
+                  child: Column(
+                    children: [
+                      widget.todayTasks.length > 0
+                          ? Container(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Today",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14,
+                                      color: Color(0xFF8B87B3),
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : SizedBox.shrink(),
-                    widget.todayTasks.length > 0
-                        ? Column(
-                            children: [
-                              for (var data in widget.todayTasks)
-                                CustomTodoTile(data),
-                            ],
-                          )
-                        : SizedBox.shrink(),
-                    widget.tomorrowTasks.length > 0
-                        ? Container(
-                            margin: EdgeInsets.only(
-                              top: 18.0,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                ],
+                              ),
+                            )
+                          : SizedBox.shrink(),
+                      widget.todayTasks.length > 0
+                          ? Column(
                               children: [
-                                Text(
-                                  "Tomorrow",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 14,
-                                    color: Color(0xFF8B87B3),
-                                  ),
-                                ),
+                                for (var data in widget.todayTasks)
+                                  CustomTodoTile(data),
                               ],
-                            ),
-                          )
-                        : SizedBox.shrink(),
-                    widget.tomorrowTasks.length > 0
-                        ? Column(
-                            children: [
-                              for (var data in widget.tomorrowTasks)
-                                CustomTodoTile(data),
-                            ],
-                          )
-                        : SizedBox.shrink(),
-                    widget.upcomingTasks.length > 0
-                        ? Container(
-                            margin: EdgeInsets.only(
-                              top: 18.0,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            )
+                          : SizedBox.shrink(),
+                      widget.tomorrowTasks.length > 0
+                          ? Container(
+                              margin: EdgeInsets.only(
+                                top: 18.0,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Tomorrow",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14,
+                                      color: Color(0xFF8B87B3),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : SizedBox.shrink(),
+                      widget.tomorrowTasks.length > 0
+                          ? Column(
                               children: [
-                                Text(
-                                  "Upcoming",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 14,
-                                    color: Color(0xFF8B87B3),
-                                  ),
-                                ),
+                                for (var data in widget.tomorrowTasks)
+                                  CustomTodoTile(data),
                               ],
-                            ),
-                          )
-                        : SizedBox.shrink(),
-                    widget.upcomingTasks.length > 0
-                        ? Column(
-                            children: [
-                              for (var data in widget.upcomingTasks)
-                                CustomTodoTile(data),
-                            ],
-                          )
-                        : SizedBox.shrink(),
-                    Container(
-                      margin: EdgeInsets.only(
-                        bottom: 18.0,
-                        top: 18.0,
+                            )
+                          : SizedBox.shrink(),
+                      widget.upcomingTasks.length > 0
+                          ? Container(
+                              margin: EdgeInsets.only(
+                                top: 18.0,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Upcoming",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14,
+                                      color: Color(0xFF8B87B3),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : SizedBox.shrink(),
+                      widget.upcomingTasks.length > 0
+                          ? Column(
+                              children: [
+                                for (var data in widget.upcomingTasks)
+                                  CustomTodoTile(data),
+                              ],
+                            )
+                          : SizedBox.shrink(),
+                      Container(
+                        margin: EdgeInsets.only(
+                          bottom: 18.0,
+                          top: 18.0,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -386,6 +395,7 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
 
   Widget _customBottomBar() {
     return BottomNavigationBar(
+      backgroundColor: Colors.white,
       selectedItemColor: Colors.blue,
       unselectedItemColor: Color(0xFFBEBEBE),
       currentIndex: widget._selectedIndex,
@@ -414,7 +424,7 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
     widget.tomorrowTasks = [];
     widget.upcomingTasks = [];
     widget.pastTasks = [];
-    for (var data in myTodoList) {
+    for (var data in TodoTasksProvider().myTodoList) {
       int index = _dateComparator(data.todoStartDate);
       if (index == 0) {
         widget.todayTasks.add(data);
@@ -489,7 +499,7 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
     widget.partyTasks = [];
     widget.studyTasks = [];
 
-    for (var data in myTodoList) {
+    for (var data in TodoTasksProvider().myTodoList) {
       if (data.todoType.toLowerCase() == "personal") {
         widget.personalTasks.add(data);
       } else if (data.todoType.toLowerCase() == "work") {

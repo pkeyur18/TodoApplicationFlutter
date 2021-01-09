@@ -99,7 +99,7 @@ class _CustomTodoTileState extends State<CustomTodoTile> {
                           style: TextStyle(
                             color: Color(0xFFC6C6C8),
                             fontWeight: FontWeight.w800,
-                            fontSize: 13,
+                            fontSize: 12,
                           ),
                         ),
                       ),
@@ -107,8 +107,11 @@ class _CustomTodoTileState extends State<CustomTodoTile> {
                         margin: EdgeInsets.only(
                           left: 10,
                         ),
+                        width: MediaQuery.of(context).size.width * 0.45,
                         child: Text(
                           widget.data.todoName,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
                           style: widget.data.completed
                               ? TextStyle(
                                   color: Color(0xFFD9D9D9),

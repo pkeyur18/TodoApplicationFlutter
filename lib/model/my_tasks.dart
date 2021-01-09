@@ -1,9 +1,5 @@
-import 'dart:convert';
-
-TodoTasksModel getTodoList() {
-  TodoTasksModel data = TodoTasksModel.fromJson(jsonDecode(todoListJson));
-  return data;
-}
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class TodoTasksModel {
   int todoId;
@@ -13,117 +9,115 @@ class TodoTasksModel {
   bool completed;
   DateTime todoStartDate;
 
-  TodoTasksModel(
+  TodoTasksModel({
     this.todoId,
     this.todoType,
     this.todoName,
     this.setReminder,
     this.completed,
     this.todoStartDate,
-  );
-
-  factory TodoTasksModel.fromJson(dynamic json) {
-    return TodoTasksModel(
-      json['todoId'] as int,
-      json['todoType'] as String,
-      json['todoName'] as String,
-      json['setReminder'] as bool,
-      json['completed'] as bool,
-      json['todoStartDate'] as DateTime,
-    );
-  }
+  });
 }
 
-List<TodoTasksModel> myTodoList = [
-  new TodoTasksModel(
-    1,
-    "Personal",
-    "Go jogging with Christin",
-    false,
-    true,
-    new DateTime(2021, 01, 06, 07, 00),
-  ),
-  new TodoTasksModel(
-    2,
-    "Work",
-    "Send project file",
-    true,
-    true,
-    new DateTime(2021, 01, 05, 10, 00),
-  ),
-  new TodoTasksModel(
-    3,
-    "Meeting",
-    "Meeting with client",
-    false,
-    true,
-    new DateTime(2021, 01, 07, 12, 00),
-  ),
-  new TodoTasksModel(
-    4,
-    "Work",
-    "Email client",
-    true,
-    false,
-    new DateTime(2021, 01, 07, 15, 00),
-  ),
-  new TodoTasksModel(
-    5,
-    "Personal",
-    "Morning yoga",
-    false,
-    false,
-    new DateTime(2021, 01, 05, 07, 00),
-  ),
-  new TodoTasksModel(
-    6,
-    "Work",
-    "Send project file",
-    true,
-    false,
-    new DateTime(2021, 01, 09, 12, 00),
-  ),
-  new TodoTasksModel(
-    7,
-    "Meeting",
-    "Meeting with client",
-    true,
-    false,
-    new DateTime(2021, 01, 05, 15, 00),
-  ),
-  new TodoTasksModel(
-    8,
-    "Personal",
-    "Morning yoga",
-    true,
-    false,
-    new DateTime(2021, 01, 09, 07, 00),
-  ),
-  new TodoTasksModel(
-    9,
-    "Meeting",
-    "Meeting with client",
-    true,
-    false,
-    new DateTime(2021, 01, 06, 10, 00),
-  ),
-  new TodoTasksModel(
-    10,
-    "Personal",
-    "Go jogging with Christin",
-    true,
-    false,
-    new DateTime(2021, 01, 09, 07, 00),
-  ),
-  new TodoTasksModel(
-    10,
-    "Study",
-    "Study",
-    true,
-    false,
-    new DateTime(2021, 01, 09, 07, 00),
-  ),
-];
+class TodoTasksProvider extends ChangeNotifier {
+  List<TodoTasksModel> myTodoList = [
+    new TodoTasksModel(
+      todoId: 1,
+      todoType: "Personal",
+      todoName: "Go jogging with Christin",
+      setReminder: false,
+      completed: true,
+      todoStartDate: new DateTime(2021, 01, 09, 07, 00),
+    ),
+    new TodoTasksModel(
+      todoId: 2,
+      todoType: "Work",
+      todoName: "Send project file",
+      setReminder: true,
+      completed: true,
+      todoStartDate: new DateTime(2021, 01, 09, 10, 00),
+    ),
+    new TodoTasksModel(
+      todoId: 3,
+      todoType: "Meeting",
+      todoName: "Meeting with client",
+      setReminder: false,
+      completed: true,
+      todoStartDate: new DateTime(2021, 01, 09, 12, 00),
+    ),
+    new TodoTasksModel(
+      todoId: 4,
+      todoType: "Work",
+      todoName: "Email client",
+      setReminder: true,
+      completed: false,
+      todoStartDate: new DateTime(2021, 01, 10, 15, 00),
+    ),
+    new TodoTasksModel(
+      todoId: 5,
+      todoType: "Personal",
+      todoName: "Morning yoga",
+      setReminder: false,
+      completed: false,
+      todoStartDate: new DateTime(2021, 01, 10, 07, 00),
+    ),
+    new TodoTasksModel(
+      todoId: 6,
+      todoType: "Work",
+      todoName: "Send project file",
+      setReminder: true,
+      completed: false,
+      todoStartDate: new DateTime(2021, 01, 10, 12, 00),
+    ),
+    new TodoTasksModel(
+      todoId: 7,
+      todoType: "Meeting",
+      todoName: "Meeting with client",
+      setReminder: true,
+      completed: false,
+      todoStartDate: new DateTime(2021, 01, 11, 15, 00),
+    ),
+    new TodoTasksModel(
+      todoId: 8,
+      todoType: "Personal",
+      todoName: "Morning yoga",
+      setReminder: true,
+      completed: false,
+      todoStartDate: new DateTime(2021, 01, 11, 07, 00),
+    ),
+    new TodoTasksModel(
+      todoId: 9,
+      todoType: "Meeting",
+      todoName: "Meeting with client",
+      setReminder: true,
+      completed: false,
+      todoStartDate: new DateTime(2021, 01, 11, 10, 00),
+    ),
+    new TodoTasksModel(
+      todoId: 10,
+      todoType: "Study",
+      todoName: "Study",
+      setReminder: true,
+      completed: false,
+      todoStartDate: new DateTime(2021, 01, 12, 07, 00),
+    ),
+  ];
 
-String todoListJson =
-    '{"todoId": 1, "todoType" : "Work", "todoStartTime": "07:00 AM","todoName":"Send project file", "completed":false, "setReminder":true}';
+  void submitTask(String selectedTaskType, String todoTaskName, DateTime date,
+      TimeOfDay time, BuildContext context) {
+    int id = TodoTasksProvider().myTodoList.length;
+    TodoTasksProvider().myTodoList.add(
+          new TodoTasksModel(
+            todoId: id,
+            todoType: selectedTaskType,
+            todoName: todoTaskName,
+            setReminder: false,
+            completed: false,
+            todoStartDate: new DateTime(
+                date.year, date.month, date.day, time.hour, time.minute),
+          ),
+        );
+    Navigator.pop(context);
+    notifyListeners();
+  }
+}
