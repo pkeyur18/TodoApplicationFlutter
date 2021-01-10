@@ -19,13 +19,12 @@ class TodotasksDBProvider extends ChangeNotifier {
   int partyCount = 0;
   int tasksCount = 0;
 
-  Future<List<TodoTasksModel>> getAllTodotasks() async {
+  getAllTodotasks() async {
     final db = await TodoDatabase.db.database;
     todayTasks = [];
     tomorrowTasks = [];
     upcomingTasks = [];
     pastTasks = [];
-    tasksCount = 0;
 
     List<Map> results = await db.query(
       "Todolists",
@@ -57,7 +56,7 @@ class TodotasksDBProvider extends ChangeNotifier {
     upcomingTasks.sort(
       (a, b) => a.todoStartDate.compareTo(b.todoStartDate),
     );
-    return tasks;
+    notifyListeners();
   }
 
   todoTaskpageBuilder() async {
@@ -67,6 +66,7 @@ class TodotasksDBProvider extends ChangeNotifier {
     shoppingCount = await getShoppingTasksCount();
     partyCount = await getPartyTasksCount();
     studyCount = await getStudyTasksCount();
+    notifyListeners();
   }
 
   Future<int> getPersonalTasksCount() async {
@@ -141,9 +141,8 @@ class TodotasksDBProvider extends ChangeNotifier {
     return count;
   }
 
-  Future<TodoTasksModel> getLatestTask() async {
+  getLatestTask() async {
     final db = await TodoDatabase.db.database;
-    tasksCount = 0;
     List<Map> result = await db.rawQuery(
         "SELECT * FROM Todolists WHERE todostartdate > datetime('now','localtime') ORDER BY todostartdate ASC Limit 1");
 
@@ -155,22 +154,10 @@ class TodotasksDBProvider extends ChangeNotifier {
       });
     }
 
-    List<Map> count = await db.query(
-      "Todolists",
-      columns: TodoTasksModel.columns,
-      orderBy: "id ASC",
-    );
+    List<Map> count = await db.rawQuery(
+        "SELECT COUNT(*) as count FROM Todolists WHERE todostartdate > datetime('now','localtime')");
 
-    count.forEach((element) {
-      TodoTasksModel taskModel = TodoTasksModel.fromMap(element);
-      tasks.add(taskModel);
-      int index = _dateComparator(taskModel.todoStartDate);
-      if (index == 0) {
-        tasksCount = tasksCount + 1;
-      }
-    });
-
-    return latestTask;
+    tasksCount = count.first['count'];
   }
 
   addNewTask(TodoTasksModel task) async {
