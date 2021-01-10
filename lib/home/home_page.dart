@@ -1,3 +1,4 @@
+import 'package:Todo/home/UpcomingTodoTiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
@@ -8,17 +9,9 @@ import 'package:Todo/home/task_tiles.dart';
 import 'package:Todo/common/custom_appbar.dart';
 import 'package:Todo/home/TodoTiles.dart';
 import 'package:Todo/home/home_notification.dart';
-import 'package:Todo/model/my_tasks.dart';
-import 'custom_body.dart';
 
 // ignore: must_be_immutable
 class HomeTasksPage extends StatefulWidget {
-  List<TodoTasksModel> personalTasks;
-  List<TodoTasksModel> workTasks;
-  List<TodoTasksModel> meetingTasks;
-  List<TodoTasksModel> shoppingTasks;
-  List<TodoTasksModel> partyTasks;
-  List<TodoTasksModel> studyTasks;
   int _selectedIndex = 0;
 
   @override
@@ -31,19 +24,6 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
   String _image = "assets/images/keyur.jpg";
   var tabs = [];
 
-  Future<List<TodoTasksModel>> todayTasksList;
-  Future<List<TodoTasksModel>> tomorrowTasksList;
-  Future<List<TodoTasksModel>> upcomingTasksList;
-  Future<List<TodoTasksModel>> allTasksList;
-  Future<TodoTasksModel> latestTask;
-
-  Future<int> _personalTasksCount;
-  Future<int> _workTasksCount;
-  Future<int> _meetingTasksCount;
-  Future<int> _shoppingTasksCount;
-  Future<int> _studyTasksCount;
-  Future<int> _partyTasksCount;
-
   void _tabSelector() {
     tabs = [];
     tabs.add(_homeDashboard());
@@ -52,18 +32,6 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
 
   @override
   Widget build(BuildContext context) {
-    allTasksList = TodotasksDBProvider().getAllTodotasks();
-    todayTasksList = TodotasksDBProvider().getTodayTasks();
-    tomorrowTasksList = TodotasksDBProvider().getTommorowTasks();
-    upcomingTasksList = TodotasksDBProvider().getUpcomingTasks();
-    latestTask = TodotasksDBProvider().getLatestTask();
-    _personalTasksCount = TodotasksDBProvider().getPersonalTasksCount();
-    _workTasksCount = TodotasksDBProvider().getWorkTasksCount();
-    _meetingTasksCount = TodotasksDBProvider().getMeetingTasksCount();
-    _shoppingTasksCount = TodotasksDBProvider().getShoppingTasksCount();
-    _studyTasksCount = TodotasksDBProvider().getStudyTasksCount();
-    _partyTasksCount = TodotasksDBProvider().getPartyTasksCount();
-
     _tabSelector();
     return Scaffold(
       appBar: AppBar(
@@ -73,7 +41,7 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
       ),
       body: SafeArea(
         child: ChangeNotifierProvider(
-          create: (context) => TodoTasksProvider(),
+          create: (context) => TodotasksDBProvider(),
           child: Scaffold(
             body: Container(
               child: Container(
@@ -96,33 +64,32 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
   }
 
   Widget _todayReminder(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.bottomRight,
-          end: Alignment.topLeft,
-          colors: <Color>[
-            Color(0xFF81C7F5),
-            Color(0xFF3867D5),
-          ],
-        ),
-      ),
-      child: FutureBuilder(
-        future: todayTasksList,
-        builder: (context, tasks) => FutureBuilder(
-          future: latestTask,
-          builder: (context, snapshot) => Container(
+    return Consumer<TodotasksDBProvider>(
+      builder: (context, value, __) => FutureBuilder(
+        future: value.getLatestTask(),
+        builder: (context, snapshot) => Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.bottomRight,
+              end: Alignment.topLeft,
+              colors: <Color>[
+                Color(0xFF81C7F5),
+                Color(0xFF3867D5),
+              ],
+            ),
+          ),
+          child: Container(
             child: Column(
               children: [
-                snapshot.hasData
+                value.tasks.length > 0
                     ? CustomAppBar("Hi " + _user,
-                            _subheading + "${tasks.data.length} tasks", _image)
+                            _subheading + "${value.tasksCount} tasks", _image)
                         .build(context)
-                    : CustomAppBar(
-                            "Hi " + _user, _subheading + "no tasks", _image)
+                    : CustomAppBar("Hi " + _user,
+                            "Today you do not have any task", _image)
                         .build(context),
-                snapshot.hasData
-                    ? HomeNotification(snapshot.data, "Next Reminder")
+                value.latestTask != null
+                    ? HomeNotification(value.latestTask, "Next Reminder")
                     : SizedBox.shrink(),
               ],
             ),
@@ -133,239 +100,202 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
   }
 
   Widget _homeDashboard() {
-    return FutureBuilder(
-      future: allTasksList,
-      builder: (context, alltasks) => alltasks.hasData
-          ? Consumer<TodoTasksProvider>(
-              builder: (context, value, child) => Expanded(
-                child: SingleChildScrollView(
-                  child: Container(
+    return Consumer<TodotasksDBProvider>(
+      builder: (context, value, __) => FutureBuilder(
+        future: value.getAllTodotasks(),
+        builder: (context, snapshot) => Expanded(
+          child: SingleChildScrollView(
+            child: Container(
+              margin: EdgeInsets.only(
+                top: 18,
+                left: 18,
+                right: 18,
+              ),
+              child: Column(
+                children: [
+                  value.todayTasks.length > 0
+                      ? Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Today",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                  color: Color(0xFF8B87B3),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                  value.todayTasks.length > 0
+                      ? Column(
+                          children: [
+                            for (var item in value.todayTasks)
+                              CustomTodoTile(item),
+                          ],
+                        )
+                      : SizedBox.shrink(),
+                  Column(
+                    children: [
+                      value.tomorrowTasks.length > 0
+                          ? Container(
+                              margin: EdgeInsets.only(
+                                top: 18.0,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Tomorrow",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14,
+                                      color: Color(0xFF8B87B3),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : SizedBox.shrink(),
+                      value.tomorrowTasks.length > 0
+                          ? Column(
+                              children: [
+                                for (var item in value.tomorrowTasks)
+                                  CustomTodoTile(item),
+                              ],
+                            )
+                          : SizedBox.shrink(),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      value.upcomingTasks.length > 0
+                          ? Container(
+                              margin: EdgeInsets.only(
+                                top: 18.0,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Upcoming",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14,
+                                      color: Color(0xFF8B87B3),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : SizedBox.shrink(),
+                      value.upcomingTasks.length > 0
+                          ? Column(
+                              children: [
+                                for (var item in value.upcomingTasks)
+                                  UpcomingTodoTile(item),
+                              ],
+                            )
+                          : SizedBox.shrink(),
+                    ],
+                  ),
+                  Container(
                     margin: EdgeInsets.only(
-                      top: 18,
-                      left: 18,
-                      right: 18,
-                    ),
-                    child: Column(
-                      children: [
-                        FutureBuilder(
-                          future: todayTasksList,
-                          builder: (context, snapshot) => Column(
-                            children: [
-                              snapshot.hasData
-                                  ? Container(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Today",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 14,
-                                              color: Color(0xFF8B87B3),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : SizedBox.shrink(),
-                              snapshot.hasData
-                                  ? Column(
-                                      children: [
-                                        for (var item in snapshot.data)
-                                          CustomTodoTile(item),
-                                      ],
-                                    )
-                                  : SizedBox.shrink(),
-                            ],
-                          ),
-                        ),
-                        FutureBuilder(
-                          future: tomorrowTasksList,
-                          builder: (context, snapshot) => Column(
-                            children: [
-                              snapshot.hasData
-                                  ? Container(
-                                      margin: EdgeInsets.only(
-                                        top: 18.0,
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Tomorrow",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 14,
-                                              color: Color(0xFF8B87B3),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : SizedBox.shrink(),
-                              snapshot.hasData
-                                  ? Column(
-                                      children: [
-                                        for (var item in snapshot.data)
-                                          CustomTodoTile(item),
-                                      ],
-                                    )
-                                  : SizedBox.shrink(),
-                            ],
-                          ),
-                        ),
-                        FutureBuilder(
-                          future: upcomingTasksList,
-                          builder: (context, snapshot) => Column(
-                            children: [
-                              snapshot.hasData
-                                  ? Container(
-                                      margin: EdgeInsets.only(
-                                        top: 18.0,
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Upcoming",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 14,
-                                              color: Color(0xFF8B87B3),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : SizedBox.shrink(),
-                              snapshot.hasData
-                                  ? Column(
-                                      children: [
-                                        for (var item in snapshot.data)
-                                          CustomTodoTile(item),
-                                      ],
-                                    )
-                                  : SizedBox.shrink(),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(
-                            bottom: 18.0,
-                            top: 18.0,
-                          ),
-                        ),
-                      ],
+                      bottom: 18.0,
+                      top: 18.0,
                     ),
                   ),
-                ),
-              ),
-            )
-          : Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  EmptyNotesBody(),
                 ],
               ),
             ),
+          ),
+        ),
+      ),
     );
   }
 
   _taskDashboard() {
-    return Expanded(
-      child: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.only(
-            top: 18,
-            left: 18,
-            right: 18,
-          ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Consumer<TodotasksDBProvider>(
+      builder: (context, value, __) => FutureBuilder(
+        future: value.todoTaskpageBuilder(),
+        builder: (context, snapshot) => Expanded(
+          child: SingleChildScrollView(
+            child: Container(
+              margin: EdgeInsets.only(
+                top: 18,
+                left: 18,
+                right: 18,
+              ),
+              child: Column(
                 children: [
-                  Text(
-                    "Projects",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                      color: Color(0xFF8B87B3),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Projects",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                          color: Color(0xFF8B87B3),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                      top: 18,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TaskTiles("Personal", "${value.personalCount} Tasks",
+                            _personalImageBuilder()),
+                        TaskTiles("Work", "${value.workCount} Tasks",
+                            _workImageBuilder()),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                      top: 18,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TaskTiles("Meeting", "${value.meetingCount} Tasks",
+                            _meetingImageBuilder()),
+                        TaskTiles("Shopping", "${value.shoppingCount} Tasks",
+                            _shoppingImageBuilder()),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                      top: 18,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TaskTiles("Party", "${value.partyCount} Tasks",
+                            _partyImageBuilder()),
+                        TaskTiles("Study", "${value.studyCount} Tasks",
+                            _studyImageBuilder()),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                      top: 18,
                     ),
                   ),
                 ],
               ),
-              Container(
-                margin: EdgeInsets.only(
-                  top: 18,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    FutureBuilder(
-                      future: _personalTasksCount,
-                      builder: (context, snapshot) => TaskTiles("Personal",
-                          "${snapshot.data} Tasks", _personalImageBuilder()),
-                    ),
-                    FutureBuilder(
-                      future: _workTasksCount,
-                      builder: (context, snapshot) => TaskTiles("Work",
-                          "${snapshot.data} Tasks", _workImageBuilder()),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(
-                  top: 18,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    FutureBuilder(
-                      future: _meetingTasksCount,
-                      builder: (context, snapshot) => TaskTiles("Meeting",
-                          "${snapshot.data} Tasks", _meetingImageBuilder()),
-                    ),
-                    FutureBuilder(
-                      future: _shoppingTasksCount,
-                      builder: (context, snapshot) => TaskTiles("Shopping",
-                          "${snapshot.data} Tasks", _shoppingImageBuilder()),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(
-                  top: 18,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    FutureBuilder(
-                      future: _partyTasksCount,
-                      builder: (context, snapshot) => TaskTiles("Party",
-                          "${snapshot.data} Tasks", _partyImageBuilder()),
-                    ),
-                    FutureBuilder(
-                      future: _studyTasksCount,
-                      builder: (context, snapshot) => TaskTiles("Study",
-                          "${snapshot.data} Tasks", _studyImageBuilder()),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(
-                  top: 18,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

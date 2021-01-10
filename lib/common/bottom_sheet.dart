@@ -1,15 +1,12 @@
+import 'package:Todo/db/TodotasksDb.dart';
+import 'package:Todo/model/my_tasks.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class OpenBottomSheet extends StatefulWidget {
-  bool personalSelected = false;
-  bool workSelected = false;
-  bool meetingSelected = false;
-  bool studySelected = false;
-  bool shoppingSelected = false;
-  bool partySelected = false;
+  String selectedTaskType;
   @override
   _OpenBottomSheetState createState() => _OpenBottomSheetState();
 }
@@ -133,7 +130,9 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Consumer<TodoTasktypeSelectorProvider>(
-                            builder: (context, value, child) => Row(
+                              builder: (context, value, child) {
+                            widget.selectedTaskType = value._selectedTaskType;
+                            return Row(
                               children: [
                                 value._addPersonalSelector(
                                     "Personal", Color(0xFFFFD506)),
@@ -166,8 +165,8 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
                                   width: 5,
                                 ),
                               ],
-                            ),
-                          ),
+                            );
+                          }),
                         ),
                       ),
                       Container(
@@ -282,41 +281,50 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
                           ),
                         ),
                       ),
-                      Consumer<TodoDateTimeProvider>(
-                        builder: (context, value, child) => Container(
-                          margin: EdgeInsets.only(
-                            top: 50,
-                          ),
-                          child: RaisedButton(
-                            onPressed: () {
-                              _submitTask(value.dateTime, value.timeOfDay);
-                            },
-                            color: Color(0xFF),
-                            textColor: Colors.white,
-                            padding: EdgeInsets.all(0.0),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Ink(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                    colors: [
-                                      Color(0xFF7EB6FF),
-                                      Color(0xFF5F87E7),
-                                    ],
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  vertical: 15,
-                                  horizontal: 70,
-                                ),
-                                child: const Text(
-                                  "Add Task ",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 15,
+                      ChangeNotifierProvider(
+                        create: (context) => TodoTasktypeSelectorProvider(),
+                        child: Consumer<TodoDateTimeProvider>(
+                          builder: (context, value, __) => Container(
+                            margin: EdgeInsets.only(
+                              top: 50,
+                            ),
+                            child: Consumer<TodoTasktypeSelectorProvider>(
+                              builder: (context, tasktype, __) => RaisedButton(
+                                onPressed: () {
+                                  _submitForm(
+                                    context,
+                                    value.dateTime,
+                                    value.timeOfDay,
+                                  );
+                                },
+                                color: Color(0xFF),
+                                textColor: Colors.white,
+                                padding: EdgeInsets.all(0.0),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Ink(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                        colors: [
+                                          Color(0xFF7EB6FF),
+                                          Color(0xFF5F87E7),
+                                        ],
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 15,
+                                      horizontal: 70,
+                                    ),
+                                    child: const Text(
+                                      "Add Task ",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -356,6 +364,23 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
     );
   }
 
+  _submitForm(BuildContext context, DateTime date, TimeOfDay time) {
+    TodoTasksModel tasksModel = new TodoTasksModel(
+      completed: false,
+      setReminder: true,
+      todoName: _todoTaskName.text,
+      todoType: widget.selectedTaskType,
+      todoStartDate:
+          DateTime(date.year, date.month, date.day, time.hour, time.minute),
+    );
+
+    var index = TodotasksDBProvider().addNewTask(tasksModel);
+    if (index != null) {
+      _todoTaskName.clear();
+      Navigator.pop(context);
+    }
+  }
+
   Future<bool> _backButtonPressed() {
     return Navigator.maybePop(context);
   }
@@ -367,23 +392,6 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
 
   String _timeFormatter(TimeOfDay time) {
     return time.format(context);
-  }
-
-  _submitTask(DateTime date, TimeOfDay time) {
-    //   int id = TodoTasksProvider().myTodoList.length;
-    //   TodoTasksProvider().myTodoList.add(
-    //         new TodoTasksModel(
-    //           todoId: id,
-    //           todoType: widget._selectedTaskType,
-    //           todoName: _todoTaskName.text,
-    //           setReminder: false,
-    //           completed: false,
-    //           todoStartDate: new DateTime(
-    //               date.year, date.month, date.day, time.hour, time.minute),
-    //         ),
-    //       );
-    //   _todoTaskName.clear();
-    //   Navigator.pop(context);
   }
 }
 

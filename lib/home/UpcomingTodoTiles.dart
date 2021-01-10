@@ -5,24 +5,24 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../model/my_tasks.dart';
 
-class CustomTodoTile extends StatefulWidget {
+class UpcomingTodoTile extends StatefulWidget {
   final TodoTasksModel data;
   final DateTime today = DateTime.now();
 
-  CustomTodoTile(this.data);
+  UpcomingTodoTile(this.data);
 
   @override
-  _CustomTodoTileState createState() => _CustomTodoTileState();
+  _UpcomingTodoTileState createState() => _UpcomingTodoTileState();
 }
 
-class _CustomTodoTileState extends State<CustomTodoTile> {
+class _UpcomingTodoTileState extends State<UpcomingTodoTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(
         top: 14,
       ),
-      height: 55,
+      height: 70,
       child: Slidable(
         actionPane: SlidableDrawerActionPane(),
         actionExtentRatio: 0.20,
@@ -51,7 +51,7 @@ class _CustomTodoTileState extends State<CustomTodoTile> {
                     children: [
                       Container(
                         width: 6,
-                        height: 55,
+                        height: 70,
                         decoration: BoxDecoration(
                           color: (widget.data.todoType == "Personal"
                               ? Color(0xFFFFD506)
@@ -95,13 +95,30 @@ class _CustomTodoTileState extends State<CustomTodoTile> {
                         margin: EdgeInsets.only(
                           left: 12,
                         ),
-                        child: Text(
-                          _dateFormatter(),
-                          style: TextStyle(
-                            color: Color(0xFFC6C6C8),
-                            fontWeight: FontWeight.w800,
-                            fontSize: 12,
-                          ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _dateFormatter(),
+                              style: TextStyle(
+                                color: Color(0xFFC6C6C8),
+                                fontWeight: FontWeight.w800,
+                                fontSize: 12,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 4,
+                            ),
+                            Text(
+                              _timeFormatter(),
+                              style: TextStyle(
+                                color: Color(0xFFC6C6C8),
+                                fontWeight: FontWeight.w800,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       Container(
@@ -166,9 +183,15 @@ class _CustomTodoTileState extends State<CustomTodoTile> {
     );
   }
 
-  String _dateFormatter() {
+  String _timeFormatter() {
     var now = widget.data.todoStartDate;
     String formattedTime = DateFormat('hh:mm a').format(now);
+    return formattedTime;
+  }
+
+  String _dateFormatter() {
+    var now = widget.data.todoStartDate;
+    String formattedTime = DateFormat('MMM dd yyyy').format(now);
     return formattedTime;
   }
 

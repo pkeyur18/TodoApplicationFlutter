@@ -11,8 +11,22 @@ class TodotasksDBProvider extends ChangeNotifier {
   List<TodoTasksModel> pastTasks = new List();
   TodoTasksModel latestTask;
 
+  int personalCount = 0;
+  int workCount = 0;
+  int meetingCount = 0;
+  int shoppingCount = 0;
+  int studyCount = 0;
+  int partyCount = 0;
+  int tasksCount = 0;
+
   Future<List<TodoTasksModel>> getAllTodotasks() async {
     final db = await TodoDatabase.db.database;
+    todayTasks = [];
+    tomorrowTasks = [];
+    upcomingTasks = [];
+    pastTasks = [];
+    tasksCount = 0;
+
     List<Map> results = await db.query(
       "Todolists",
       columns: TodoTasksModel.columns,
@@ -22,9 +36,37 @@ class TodotasksDBProvider extends ChangeNotifier {
     results.forEach((element) {
       TodoTasksModel taskModel = TodoTasksModel.fromMap(element);
       tasks.add(taskModel);
-      notifyListeners();
+      int index = _dateComparator(taskModel.todoStartDate);
+      if (index == 0) {
+        todayTasks.add(taskModel);
+      } else {
+        int newIndex = _dateComparatorForTomorrow(taskModel.todoStartDate);
+        if (newIndex == 0)
+          tomorrowTasks.add(taskModel);
+        else
+          upcomingTasks.add(taskModel);
+      }
     });
+
+    todayTasks.sort(
+      (a, b) => a.todoStartDate.compareTo(b.todoStartDate),
+    );
+    tomorrowTasks.sort(
+      (a, b) => a.todoStartDate.compareTo(b.todoStartDate),
+    );
+    upcomingTasks.sort(
+      (a, b) => a.todoStartDate.compareTo(b.todoStartDate),
+    );
     return tasks;
+  }
+
+  todoTaskpageBuilder() async {
+    personalCount = await getPersonalTasksCount();
+    workCount = await getWorkTasksCount();
+    meetingCount = await getMeetingTasksCount();
+    shoppingCount = await getShoppingTasksCount();
+    partyCount = await getPartyTasksCount();
+    studyCount = await getStudyTasksCount();
   }
 
   Future<int> getPersonalTasksCount() async {
@@ -101,99 +143,69 @@ class TodotasksDBProvider extends ChangeNotifier {
 
   Future<TodoTasksModel> getLatestTask() async {
     final db = await TodoDatabase.db.database;
+    tasksCount = 0;
     List<Map> result = await db.rawQuery(
         "SELECT * FROM Todolists WHERE todostartdate > datetime('now','localtime') ORDER BY todostartdate ASC Limit 1");
 
-    result.forEach((element) {
-      latestTask = TodoTasksModel.fromMap(element);
-    });
-    return latestTask;
-  }
+    if (result.length == 0) {
+      latestTask = null;
+    } else {
+      result.forEach((element) {
+        latestTask = TodoTasksModel.fromMap(element);
+      });
+    }
 
-  Future<List<TodoTasksModel>> getTodayTasks() async {
-    final db = await TodoDatabase.db.database;
-    todayTasks = [];
-    List<TodoTasksModel> tempList = new List();
-
-    List<Map> results = await db.query(
+    List<Map> count = await db.query(
       "Todolists",
       columns: TodoTasksModel.columns,
+      orderBy: "id ASC",
     );
 
-    results.forEach((element) {
+    count.forEach((element) {
       TodoTasksModel taskModel = TodoTasksModel.fromMap(element);
-      tempList.add(taskModel);
-    });
-
-    tempList.forEach((element) {
-      int index = _dateComparator(element.todoStartDate);
-      if (index == 0) todayTasks.add(element);
-    });
-    todayTasks.sort(
-      (a, b) => a.todoStartDate.compareTo(b.todoStartDate),
-    );
-    notifyListeners();
-    return todayTasks;
-  }
-
-  Future<List<TodoTasksModel>> getTommorowTasks() async {
-    final db = await TodoDatabase.db.database;
-    tomorrowTasks = [];
-    List<TodoTasksModel> tempList = new List();
-
-    List<Map> results = await db.query(
-      "Todolists",
-      columns: TodoTasksModel.columns,
-    );
-
-    results.forEach((element) {
-      TodoTasksModel taskModel = TodoTasksModel.fromMap(element);
-      tempList.add(taskModel);
-    });
-
-    tempList.forEach((element) {
-      int index = _dateComparatorForTomorrow(element.todoStartDate);
-      if (index == 0) tomorrowTasks.add(element);
-    });
-
-    tomorrowTasks.sort(
-      (a, b) => a.todoStartDate.compareTo(b.todoStartDate),
-    );
-    notifyListeners();
-    return tomorrowTasks;
-  }
-
-  Future<List<TodoTasksModel>> getUpcomingTasks() async {
-    final db = await TodoDatabase.db.database;
-    upcomingTasks = [];
-    List<TodoTasksModel> tempList = new List();
-
-    List<Map> results = await db.query(
-      "Todolists",
-      columns: TodoTasksModel.columns,
-    );
-
-    results.forEach((element) {
-      TodoTasksModel taskModel = TodoTasksModel.fromMap(element);
-      tempList.add(taskModel);
-    });
-
-    tempList.forEach((element) {
-      int index = _dateComparator(element.todoStartDate);
-      if (index == 1) {
-        int newIndex = _dateComparatorForTomorrow(element.todoStartDate);
-        if (newIndex == 1) {
-          upcomingTasks.add(element);
-        }
+      tasks.add(taskModel);
+      int index = _dateComparator(taskModel.todoStartDate);
+      if (index == 0) {
+        tasksCount = tasksCount + 1;
       }
     });
 
-    upcomingTasks.sort(
-      (a, b) => a.todoStartDate.compareTo(b.todoStartDate),
-    );
+    return latestTask;
+  }
 
+  addNewTask(TodoTasksModel task) async {
+    final db = await TodoDatabase.db.database;
+    var maxId = await db.rawQuery(
+      "SELECT MAX(ID)+1 as last_id FROM Todolists",
+    );
+    int setReminder = task.setReminder ? 0 : 1;
+    int completed = task.completed ? 0 : 1;
+    String todoStartdate = task.todoStartDate.toString();
+    var id = maxId.first['last_id'];
+    var result = await db.rawInsert(
+      "INSERT INTO Todolists (id, todotype, todoname, setreminder, completed, todostartdate)"
+      "VALUES (?, ?, ?, ?, ?, ?)",
+      [
+        id,
+        task.todoType,
+        task.todoName,
+        setReminder,
+        completed,
+        todoStartdate,
+      ],
+    );
     notifyListeners();
-    return upcomingTasks;
+    return result;
+  }
+
+  deleteTask(TodoTasksModel task) async {
+    final db = await TodoDatabase.db.database;
+    db.delete(
+      "Todolists",
+      where: "id = ?",
+      whereArgs: [task.todoId],
+    );
+    notifyListeners();
   }
 
   int _dateComparator(DateTime todoStartDate) {
