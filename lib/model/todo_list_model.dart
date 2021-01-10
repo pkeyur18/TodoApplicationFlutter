@@ -1,128 +1,552 @@
-// To parse this JSON data, do
-//
-//     final todoListUser = todoListUserFromJson(jsonString);
+// import 'package:Todo/common/bottom_sheet.dart';
+// import 'package:Todo/home/custom_body.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter/rendering.dart';
+// import 'package:intl/intl.dart';
 
-import 'dart:convert';
+// import 'package:Todo/home/task_tiles.dart';
+// import 'package:Todo/common/custom_appbar.dart';
+// import 'package:Todo/home/TodoTiles.dart';
+// import 'package:Todo/home/home_notification.dart';
+// import 'package:Todo/model/my_tasks.dart';
+// import 'package:provider/provider.dart';
 
-class TodoListUser {
-  TodoListUser({
-    this.user,
-    this.image,
-    this.todoList,
-  });
+// // ignore: must_be_immutable
+// class HomeTasksPageDummy extends StatefulWidget {
+//   DateTime today = DateTime.now();
+//   List<TodoTasksModel> todayTasks;
+//   List<TodoTasksModel> tomorrowTasks;
+//   List<TodoTasksModel> upcomingTasks;
+//   List<TodoTasksModel> pastTasks;
+//   List<TodoTasksModel> personalTasks;
+//   List<TodoTasksModel> workTasks;
+//   List<TodoTasksModel> meetingTasks;
+//   List<TodoTasksModel> shoppingTasks;
+//   List<TodoTasksModel> partyTasks;
+//   List<TodoTasksModel> studyTasks;
+//   TodoTasksModel latestTask;
+//   bool hasTodayTask = false;
+//   bool hasTomorrowTask = false;
+//   bool hasUpcomingTask = false;
+//   int _selectedIndex = 0;
 
-  String user;
-  String image;
-  List<TodoList> todoList;
-  Map<String, dynamic> jsonData;
+//   @override
+//   _HomeTasksPageDummy createState() => _HomeTasksPageDummy();
+// }
 
-  factory TodoListUser.fromRawJson(String str) =>
-      TodoListUser.fromJson(json.decode(str));
+// class _HomeTasksPageDummy extends State<HomeTasksPageDummy> {
+//   int _tasks = 0;
+//   int _personalTasksCount = 0;
+//   int _workTasksCount = 0;
+//   int _meetingTasksCount = 0;
+//   int _shoppingTasksCount = 0;
+//   int _studyTasksCount = 0;
+//   int _partyTasksCount = 0;
+//   String _user = "Keyur Patel";
+//   String _subheading = "Today you have ";
+//   String _image = "assets/images/keyur.jpg";
+//   var tabs = [];
 
-  String toRawJson() => json.encode(toJson());
+//   void _tabSelector() {
+//     tabs = [];
+//     tabs.add(_homeDashboard());
+//     tabs.add(_taskDashboard());
+//   }
 
-  factory TodoListUser.fromJson(Map<String, dynamic> json) => TodoListUser(
-        user: json["user"],
-        image: json["image"],
-        todoList: List<TodoList>.from(
-            json["todoList"].map((x) => TodoList.fromJson(x))),
-      );
+//   @override
+//   Widget build(BuildContext context) {
+//     _tabSelector();
+//     return Scaffold(
+//       appBar: AppBar(
+//         elevation: 0,
+//         toolbarHeight: 0,
+//         toolbarOpacity: 0,
+//       ),
+//       body: SafeArea(
+//         child: ChangeNotifierProvider(
+//           create: (context) => TodoTasksProvider(),
+//           child: Scaffold(
+//             body: Container(
+//               child: Container(
+//                 child: Column(
+//                   children: [
+//                     _todayReminder(context),
+//                     tabs[widget._selectedIndex],
+//                   ],
+//                 ),
+//               ),
+//             ),
+//             bottomNavigationBar: _customBottomBar(),
+//             floatingActionButtonLocation:
+//                 FloatingActionButtonLocation.centerDocked,
+//             floatingActionButton: OpenBottomSheet(),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
 
-  Map<String, dynamic> toJson() => {
-        "user": user,
-        "image": image,
-        "todoList": List<dynamic>.from(todoList.map((x) => x.toJson())),
-      };
+//   Widget _todayReminder(BuildContext context) {
+//     return Container(
+//       decoration: BoxDecoration(
+//         gradient: LinearGradient(
+//           begin: Alignment.bottomRight,
+//           end: Alignment.topLeft,
+//           colors: <Color>[
+//             Color(0xFF81C7F5),
+//             Color(0xFF3867D5),
+//           ],
+//         ),
+//       ),
+//       child: Container(
+//         child: Column(
+//           children: [
+//             TodoTasksProvider().myTodoList.length > 0
+//                 ? CustomAppBar(
+//                         "Hi " + _user, _subheading + "$_tasks tasks", _image)
+//                     .build(context)
+//                 : CustomAppBar("Hi " + _user, _subheading + "no tasks", _image)
+//                     .build(context),
+//             widget.hasTodayTask
+//                 ? HomeNotification(widget.latestTask, "Today Reminder")
+//                 : (widget.hasTomorrowTask
+//                     ? HomeNotification(widget.latestTask, "Tomorrow Reminder")
+//                     : (widget.hasUpcomingTask
+//                         ? HomeNotification(
+//                             widget.latestTask, "Upcoming Reminder")
+//                         : SizedBox.shrink())),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
 
-  Future<TodoListUser> loadTasks() {
-    Map<String, dynamic> todoMap =
-        TodoListUser.fromRawJson('assets/json/todo_list.json')
-            as Map<String, dynamic>;
-    print(todoMap);
-    var todo = TodoListUser.fromJson(todoMap);
-    return Future.value(todo);
-  }
-}
+//   Widget _homeDashboard() {
+//     _sortingTasks();
+//     return TodoTasksProvider().myTodoList.length > 0
+//         ? Consumer<TodoTasksProvider>(
+//             builder: (context, value, child) => Expanded(
+//               child: SingleChildScrollView(
+//                 child: Container(
+//                   margin: EdgeInsets.only(
+//                     top: 18,
+//                     left: 18,
+//                     right: 18,
+//                   ),
+//                   child: Column(
+//                     children: [
+//                       widget.todayTasks.length > 0
+//                           ? Container(
+//                               child: Row(
+//                                 mainAxisAlignment:
+//                                     MainAxisAlignment.spaceBetween,
+//                                 children: [
+//                                   Text(
+//                                     "Today",
+//                                     style: TextStyle(
+//                                       fontWeight: FontWeight.w700,
+//                                       fontSize: 14,
+//                                       color: Color(0xFF8B87B3),
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                             )
+//                           : SizedBox.shrink(),
+//                       widget.todayTasks.length > 0
+//                           ? Column(
+//                               children: [
+//                                 for (var data in widget.todayTasks)
+//                                   CustomTodoTile(data),
+//                               ],
+//                             )
+//                           : SizedBox.shrink(),
+//                       widget.tomorrowTasks.length > 0
+//                           ? Container(
+//                               margin: EdgeInsets.only(
+//                                 top: 18.0,
+//                               ),
+//                               child: Row(
+//                                 mainAxisAlignment:
+//                                     MainAxisAlignment.spaceBetween,
+//                                 children: [
+//                                   Text(
+//                                     "Tomorrow",
+//                                     style: TextStyle(
+//                                       fontWeight: FontWeight.w700,
+//                                       fontSize: 14,
+//                                       color: Color(0xFF8B87B3),
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                             )
+//                           : SizedBox.shrink(),
+//                       widget.tomorrowTasks.length > 0
+//                           ? Column(
+//                               children: [
+//                                 for (var data in widget.tomorrowTasks)
+//                                   CustomTodoTile(data),
+//                               ],
+//                             )
+//                           : SizedBox.shrink(),
+//                       widget.upcomingTasks.length > 0
+//                           ? Container(
+//                               margin: EdgeInsets.only(
+//                                 top: 18.0,
+//                               ),
+//                               child: Row(
+//                                 mainAxisAlignment:
+//                                     MainAxisAlignment.spaceBetween,
+//                                 children: [
+//                                   Text(
+//                                     "Upcoming",
+//                                     style: TextStyle(
+//                                       fontWeight: FontWeight.w700,
+//                                       fontSize: 14,
+//                                       color: Color(0xFF8B87B3),
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                             )
+//                           : SizedBox.shrink(),
+//                       widget.upcomingTasks.length > 0
+//                           ? Column(
+//                               children: [
+//                                 for (var data in widget.upcomingTasks)
+//                                   CustomTodoTile(data),
+//                               ],
+//                             )
+//                           : SizedBox.shrink(),
+//                       Container(
+//                         margin: EdgeInsets.only(
+//                           bottom: 18.0,
+//                           top: 18.0,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             ),
+//           )
+//         : Expanded(
+//             child: Column(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               crossAxisAlignment: CrossAxisAlignment.center,
+//               children: [
+//                 EmptyNotesBody(),
+//               ],
+//             ),
+//           );
+//   }
 
-class TodoList {
-  TodoList({
-    this.todoId,
-    this.todoType,
-    this.todoStartDate,
-    this.todoEndDate,
-    this.todoStartTime,
-    this.todoEndTime,
-    this.todoName,
-    this.completed,
-    this.setReminder,
-    this.reminderTime,
-    this.snooze,
-  });
+//   _taskDashboard() {
+//     return Expanded(
+//       child: SingleChildScrollView(
+//         child: Container(
+//           margin: EdgeInsets.only(
+//             top: 18,
+//             left: 18,
+//             right: 18,
+//           ),
+//           child: Column(
+//             children: [
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                 children: [
+//                   Text(
+//                     "Projects",
+//                     style: TextStyle(
+//                       fontWeight: FontWeight.w700,
+//                       fontSize: 14,
+//                       color: Color(0xFF8B87B3),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//               Container(
+//                 margin: EdgeInsets.only(
+//                   top: 18,
+//                 ),
+//                 child: Row(
+//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                   children: [
+//                     TaskTiles("Personal", "$_personalTasksCount Tasks",
+//                         _personalImageBuilder()),
+//                     TaskTiles(
+//                         "Work", "$_workTasksCount Tasks", _workImageBuilder()),
+//                   ],
+//                 ),
+//               ),
+//               Container(
+//                 margin: EdgeInsets.only(
+//                   top: 18,
+//                 ),
+//                 child: Row(
+//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                   children: [
+//                     TaskTiles("Meeting", "$_meetingTasksCount Tasks",
+//                         _meetingImageBuilder()),
+//                     TaskTiles("Shopping", "$_shoppingTasksCount Tasks",
+//                         _shoppingImageBuilder()),
+//                   ],
+//                 ),
+//               ),
+//               Container(
+//                 margin: EdgeInsets.only(
+//                   top: 18,
+//                 ),
+//                 child: Row(
+//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                   children: [
+//                     TaskTiles("Party", "$_partyTasksCount Tasks",
+//                         _partyImageBuilder()),
+//                     TaskTiles("Study", "$_studyTasksCount Tasks",
+//                         _studyImageBuilder()),
+//                   ],
+//                 ),
+//               ),
+//               Container(
+//                 margin: EdgeInsets.only(
+//                   top: 18,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
 
-  int todoId;
-  TodoType todoType;
-  String todoStartDate;
-  String todoEndDate;
-  String todoStartTime;
-  String todoEndTime;
-  String todoName;
-  bool completed;
-  bool setReminder;
-  String reminderTime;
-  bool snooze;
+//   Widget _personalImageBuilder() {
+//     return CircleAvatar(
+//       radius: 34,
+//       backgroundColor: Color(0x78FFEE9B),
+//       child: Image(
+//         width: 28,
+//         height: 34,
+//         image: AssetImage('assets/images/user.png'),
+//       ),
+//     );
+//   }
 
-  factory TodoList.fromRawJson(String str) =>
-      TodoList.fromJson(json.decode(str));
+//   Widget _workImageBuilder() {
+//     return CircleAvatar(
+//       radius: 34,
+//       backgroundColor: Color(0x78B5FF9B),
+//       child: Image(
+//         width: 30,
+//         height: 34,
+//         image: AssetImage('assets/images/briefcase.png'),
+//       ),
+//     );
+//   }
 
-  String toRawJson() => json.encode(toJson());
+//   Widget _meetingImageBuilder() {
+//     return CircleAvatar(
+//       radius: 34,
+//       backgroundColor: Color(0x78FF9BCD),
+//       child: Image(
+//         width: 30,
+//         height: 34,
+//         image: AssetImage('assets/images/presentation.png'),
+//       ),
+//     );
+//   }
 
-  factory TodoList.fromJson(Map<String, dynamic> json) => TodoList(
-        todoId: json["todoId"],
-        todoType: todoTypeValues.map[json["todoType"]],
-        todoStartDate: json["todoStartDate"],
-        todoEndDate: json["todoEndDate"],
-        todoStartTime: json["todoStartTime"],
-        todoEndTime: json["todoEndTime"],
-        todoName: json["todoName"],
-        completed: json["completed"],
-        setReminder: json["setReminder"],
-        reminderTime: json["reminderTime"],
-        snooze: json["snooze"],
-      );
+//   Widget _shoppingImageBuilder() {
+//     return CircleAvatar(
+//       radius: 34,
+//       backgroundColor: Color(0x78FFD09B),
+//       child: Image(
+//         width: 30,
+//         height: 34,
+//         image: AssetImage('assets/images/shopping-basket.png'),
+//       ),
+//     );
+//   }
 
-  Map<String, dynamic> toJson() => {
-        "todoId": todoId,
-        "todoType": todoTypeValues.reverse[todoType],
-        "todoStartDate": todoStartDate,
-        "todoEndDate": todoEndDate,
-        "todoStartTime": todoStartTime,
-        "todoEndTime": todoEndTime,
-        "todoName": todoName,
-        "completed": completed,
-        "setReminder": setReminder,
-        "reminderTime": reminderTime,
-        "snooze": snooze,
-      };
-}
+//   Widget _partyImageBuilder() {
+//     return CircleAvatar(
+//       radius: 34,
+//       backgroundColor: Color(0x709BFFF8),
+//       child: Image(
+//         width: 30,
+//         height: 34,
+//         image: AssetImage('assets/images/confetti.png'),
+//       ),
+//     );
+//   }
 
-enum TodoType { PERSONAL, WORK, MEETING }
+//   Widget _studyImageBuilder() {
+//     return CircleAvatar(
+//       radius: 34,
+//       backgroundColor: Color(0x78F59BFF),
+//       child: Image(
+//         width: 30,
+//         height: 34,
+//         image: AssetImage('assets/images/molecule.png'),
+//       ),
+//     );
+//   }
 
-final todoTypeValues = EnumValues({
-  "Meeting": TodoType.MEETING,
-  "Personal": TodoType.PERSONAL,
-  "Work": TodoType.WORK
-});
+//   Widget _customBottomBar() {
+//     return BottomNavigationBar(
+//       backgroundColor: Colors.white,
+//       selectedItemColor: Colors.blue,
+//       unselectedItemColor: Color(0xFFBEBEBE),
+//       currentIndex: widget._selectedIndex,
+//       onTap: _onItemTaped,
+//       items: const <BottomNavigationBarItem>[
+//         BottomNavigationBarItem(
+//           icon: Icon(Icons.home),
+//           label: 'Home',
+//         ),
+//         BottomNavigationBarItem(
+//           icon: Icon(Icons.widgets),
+//           label: 'Tasks',
+//         ),
+//       ],
+//     );
+//   }
 
-class EnumValues<T> {
-  Map<String, T> map;
-  Map<T, String> reverseMap;
+//   void _onItemTaped(int index) {
+//     setState(() {
+//       widget._selectedIndex = index;
+//     });
+//   }
 
-  EnumValues(this.map);
+//   void _sortingTasks() {
+//     widget.todayTasks = [];
+//     widget.tomorrowTasks = [];
+//     widget.upcomingTasks = [];
+//     widget.pastTasks = [];
+//     for (var data in TodoTasksProvider().myTodoList) {
+//       int index = _dateComparator(data.todoStartDate);
+//       if (index == 0) {
+//         widget.todayTasks.add(data);
+//       } else if (index == 1) {
+//         int newIndex = _dateComparatorForTomorrow(data.todoStartDate);
+//         if (newIndex == 0) {
+//           widget.tomorrowTasks.add(data);
+//         } else if (newIndex == 1) {
+//           widget.upcomingTasks.add(data);
+//         } else {
+//           widget.pastTasks.add(data);
+//         }
+//       } else {
+//         widget.pastTasks.add(data);
+//       }
+//     }
 
-  Map<T, String> get reverse {
-    if (reverseMap == null) {
-      reverseMap = map.map((k, v) => new MapEntry(v, k));
-    }
-    return reverseMap;
-  }
-}
+//     widget.todayTasks.sort(
+//       (a, b) => a.todoStartDate.compareTo(b.todoStartDate),
+//     );
+//     widget.tomorrowTasks.sort(
+//       (a, b) => a.todoStartDate.compareTo(b.todoStartDate),
+//     );
+//     widget.upcomingTasks.sort(
+//       (a, b) => a.todoStartDate.compareTo(b.todoStartDate),
+//     );
+//     widget.pastTasks.sort(
+//       (a, b) => a.todoStartDate.compareTo(b.todoStartDate),
+//     );
+
+//     for (var data in widget.todayTasks) {
+//       int index = _findLatestTask(data.todoStartDate);
+//       if (index == 1) {
+//         widget.latestTask = data;
+//         widget.hasTodayTask = true;
+//         widget.hasTomorrowTask = false;
+//         widget.hasUpcomingTask = false;
+//         break;
+//       }
+//     }
+//     if (!widget.hasTodayTask) {
+//       for (var data in widget.tomorrowTasks) {
+//         int index = _findLatestTask(data.todoStartDate);
+//         if (index == 1) {
+//           widget.latestTask = data;
+//           widget.hasTodayTask = false;
+//           widget.hasTomorrowTask = true;
+//           widget.hasUpcomingTask = false;
+//           break;
+//         }
+//       }
+//     }
+
+//     if (!widget.hasTodayTask && !widget.hasTomorrowTask) {
+//       for (var data in widget.upcomingTasks) {
+//         int index = _findLatestTask(data.todoStartDate);
+//         if (index == 1) {
+//           widget.latestTask = data;
+//           widget.hasTodayTask = false;
+//           widget.hasTomorrowTask = false;
+//           widget.hasUpcomingTask = true;
+//           break;
+//         }
+//       }
+//     }
+//     _tasks = widget.todayTasks.length;
+
+//     widget.personalTasks = [];
+//     widget.workTasks = [];
+//     widget.shoppingTasks = [];
+//     widget.meetingTasks = [];
+//     widget.partyTasks = [];
+//     widget.studyTasks = [];
+
+//     for (var data in TodoTasksProvider().myTodoList) {
+//       if (data.todoType.toLowerCase() == "personal") {
+//         widget.personalTasks.add(data);
+//       } else if (data.todoType.toLowerCase() == "work") {
+//         widget.workTasks.add(data);
+//       } else if (data.todoType.toLowerCase() == "meeting") {
+//         widget.meetingTasks.add(data);
+//       } else if (data.todoType.toLowerCase() == "shopping") {
+//         widget.shoppingTasks.add(data);
+//       } else if (data.todoType.toLowerCase() == "party") {
+//         widget.partyTasks.add(data);
+//       } else if (data.todoType.toLowerCase() == "study") {
+//         widget.studyTasks.add(data);
+//       }
+//     }
+
+//     _personalTasksCount = widget.personalTasks.length;
+//     _workTasksCount = widget.workTasks.length;
+//     _meetingTasksCount = widget.meetingTasks.length;
+//     _studyTasksCount = widget.studyTasks.length;
+//     _shoppingTasksCount = widget.shoppingTasks.length;
+//     _partyTasksCount = widget.partyTasks.length;
+//   }
+
+//   int _dateComparator(DateTime todoStartDate) {
+//     var todayDate = DateTime.now();
+//     var formatter = new DateFormat('yyyyMMdd');
+//     String formattedDate = formatter.format(todoStartDate);
+//     String formattedTodayDate = formatter.format(todayDate);
+//     DateTime todayNewDate = DateTime.parse(formattedTodayDate);
+//     DateTime newDate = DateTime.parse(formattedDate);
+//     return newDate.compareTo(todayNewDate);
+//   }
+
+//   int _dateComparatorForTomorrow(DateTime todoStartDate) {
+//     var tomorrowDate = DateTime.now().add(new Duration(days: 1));
+//     var formatter = new DateFormat('yyyyMMdd');
+
+//     String formattedDate = formatter.format(todoStartDate);
+//     DateTime newDate = DateTime.parse(formattedDate);
+
+//     String formattedTomorrowDate = formatter.format(tomorrowDate);
+//     DateTime tomorrowNewDate = DateTime.parse(formattedTomorrowDate);
+
+//     return newDate.compareTo(tomorrowNewDate);
+//   }
+
+//   int _findLatestTask(DateTime date) {
+//     DateTime now = new DateTime.now();
+//     return date.compareTo(now);
+//   }
+// }

@@ -1,4 +1,3 @@
-import 'package:Todo/model/my_tasks.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +10,6 @@ class OpenBottomSheet extends StatefulWidget {
   bool studySelected = false;
   bool shoppingSelected = false;
   bool partySelected = false;
-  String _selectedTaskType = "Personal";
   @override
   _OpenBottomSheetState createState() => _OpenBottomSheetState();
 }
@@ -66,11 +64,8 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
       context: context,
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.elliptical(
-            MediaQuery.of(context).size.width * 0.50,
-            MediaQuery.of(context).size.width * 0.30,
-          ),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(50),
         ),
       ),
       builder: (builder) {
@@ -335,13 +330,14 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
                 Container(
                   margin: EdgeInsets.only(
                     top: MediaQuery.of(context).size.height * 0.05,
-                    right: 18,
+                    right: MediaQuery.of(context).size.width * 0.075,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       GestureDetector(
                         onTap: () {
+                          _todoTaskName.clear();
                           Navigator.pop(context);
                         },
                         child: Icon(
@@ -374,20 +370,20 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
   }
 
   _submitTask(DateTime date, TimeOfDay time) {
-    int id = TodoTasksProvider().myTodoList.length;
-    TodoTasksProvider().myTodoList.add(
-          new TodoTasksModel(
-            todoId: id,
-            todoType: widget._selectedTaskType,
-            todoName: _todoTaskName.text,
-            setReminder: false,
-            completed: false,
-            todoStartDate: new DateTime(
-                date.year, date.month, date.day, time.hour, time.minute),
-          ),
-        );
-    _todoTaskName.clear();
-    Navigator.pop(context);
+    //   int id = TodoTasksProvider().myTodoList.length;
+    //   TodoTasksProvider().myTodoList.add(
+    //         new TodoTasksModel(
+    //           todoId: id,
+    //           todoType: widget._selectedTaskType,
+    //           todoName: _todoTaskName.text,
+    //           setReminder: false,
+    //           completed: false,
+    //           todoStartDate: new DateTime(
+    //               date.year, date.month, date.day, time.hour, time.minute),
+    //         ),
+    //       );
+    //   _todoTaskName.clear();
+    //   Navigator.pop(context);
   }
 }
 
