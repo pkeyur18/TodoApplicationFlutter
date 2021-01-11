@@ -27,7 +27,10 @@ class EmptyNotesBody extends StatelessWidget {
         ),
         Text(
           'You have no task to do.',
-          style: TextStyle(fontSize: 17, color: Color(0xFF82A0B7)),
+          style: TextStyle(
+            fontSize: 17,
+            color: Color(0xFF82A0B7),
+          ),
         ),
       ],
     );

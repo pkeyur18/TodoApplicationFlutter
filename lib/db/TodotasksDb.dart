@@ -2,29 +2,47 @@ import 'package:Todo/db/database.dart';
 import 'package:Todo/model/my_tasks.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+// import 'package:async/async.dart';
 
-class TodotasksDBProvider extends ChangeNotifier {
-  List<TodoTasksModel> tasks = new List();
-  List<TodoTasksModel> todayTasks = new List();
-  List<TodoTasksModel> tomorrowTasks = new List();
-  List<TodoTasksModel> upcomingTasks = new List();
-  List<TodoTasksModel> pastTasks = new List();
-  TodoTasksModel latestTask;
+class DBHelper with ChangeNotifier {
+  List<TodoTasksModel> _tasks = new List();
+  List<TodoTasksModel> _todayTasks = new List();
+  List<TodoTasksModel> _tomorrowTasks = new List();
+  List<TodoTasksModel> _upcomingTasks = new List();
+  List<TodoTasksModel> _pastTasks = new List();
+  TodoTasksModel _latestTask;
+  // final AsyncMemoizer _memoizer = AsyncMemoizer();
 
-  int personalCount = 0;
-  int workCount = 0;
-  int meetingCount = 0;
-  int shoppingCount = 0;
-  int studyCount = 0;
-  int partyCount = 0;
-  int tasksCount = 0;
+  int _personalCount = 0;
+  int _workCount = 0;
+  int _meetingCount = 0;
+  int _shoppingCount = 0;
+  int _studyCount = 0;
+  int _partyCount = 0;
+  int _tasksCount = 0;
+
+  List<TodoTasksModel> get tasks => _tasks;
+  List<TodoTasksModel> get todayTasks => _todayTasks;
+  List<TodoTasksModel> get tomorrowTasks => _tomorrowTasks;
+  List<TodoTasksModel> get upcomingTasks => _upcomingTasks;
+  List<TodoTasksModel> get pastTasks => _pastTasks;
+
+  TodoTasksModel get latestTask => _latestTask;
+
+  int get personalCount => _personalCount;
+  int get meetingCount => _meetingCount;
+  int get shoppingCount => _shoppingCount;
+  int get studyCount => _studyCount;
+  int get partyCount => _partyCount;
+  int get workCount => _workCount;
+  int get tasksCount => _tasksCount;
 
   getAllTodotasks() async {
     final db = await TodoDatabase.db.database;
-    todayTasks = [];
-    tomorrowTasks = [];
-    upcomingTasks = [];
-    pastTasks = [];
+    _todayTasks = [];
+    _tomorrowTasks = [];
+    _upcomingTasks = [];
+    _pastTasks = [];
 
     List<Map> results = await db.query(
       "Todolists",
@@ -34,111 +52,48 @@ class TodotasksDBProvider extends ChangeNotifier {
 
     results.forEach((element) {
       TodoTasksModel taskModel = TodoTasksModel.fromMap(element);
-      tasks.add(taskModel);
+      _tasks.add(taskModel);
       int index = _dateComparator(taskModel.todoStartDate);
       if (index == 0) {
-        todayTasks.add(taskModel);
+        _todayTasks.add(taskModel);
       } else {
         int newIndex = _dateComparatorForTomorrow(taskModel.todoStartDate);
         if (newIndex == 0)
-          tomorrowTasks.add(taskModel);
-        else
-          upcomingTasks.add(taskModel);
+          _tomorrowTasks.add(taskModel);
+        else {
+          int pastIndex = _dateComparator(taskModel.todoStartDate);
+          if (pastIndex < 0) {
+            pastTasks.add(taskModel);
+          } else {
+            _upcomingTasks.add(taskModel);
+          }
+        }
       }
     });
 
-    todayTasks.sort(
+    _todayTasks.sort(
       (a, b) => a.todoStartDate.compareTo(b.todoStartDate),
     );
-    tomorrowTasks.sort(
+    _tomorrowTasks.sort(
       (a, b) => a.todoStartDate.compareTo(b.todoStartDate),
     );
-    upcomingTasks.sort(
+    _upcomingTasks.sort(
       (a, b) => a.todoStartDate.compareTo(b.todoStartDate),
     );
-    notifyListeners();
   }
 
   todoTaskpageBuilder() async {
-    personalCount = await getPersonalTasksCount();
-    workCount = await getWorkTasksCount();
-    meetingCount = await getMeetingTasksCount();
-    shoppingCount = await getShoppingTasksCount();
-    partyCount = await getPartyTasksCount();
-    studyCount = await getStudyTasksCount();
-    notifyListeners();
-  }
+    _personalCount = await TodoDatabase.db.getPersonalTasksCount();
 
-  Future<int> getPersonalTasksCount() async {
-    final db = await TodoDatabase.db.database;
-    int count = 0;
-    var results = await db.rawQuery(
-      "SELECT COUNT(*) as count FROM Todolists WHERE todotype = 'Personal'",
-    );
-    results.forEach((element) {
-      count = element['count'];
-    });
-    return count;
-  }
+    _workCount = await TodoDatabase.db.getWorkTasksCount();
 
-  Future<int> getWorkTasksCount() async {
-    final db = await TodoDatabase.db.database;
-    int count = 0;
-    var results = await db.rawQuery(
-      "SELECT COUNT(*) as count FROM Todolists WHERE todotype = 'Work'",
-    );
-    results.forEach((element) {
-      count = element['count'];
-    });
-    return count;
-  }
+    _meetingCount = await TodoDatabase.db.getMeetingTasksCount();
 
-  Future<int> getMeetingTasksCount() async {
-    final db = await TodoDatabase.db.database;
-    int count = 0;
-    var results = await db.rawQuery(
-      "SELECT COUNT(*) as count FROM Todolists WHERE todotype = 'Meeting'",
-    );
-    results.forEach((element) {
-      count = element['count'];
-    });
-    return count;
-  }
+    _shoppingCount = await TodoDatabase.db.getShoppingTasksCount();
 
-  Future<int> getShoppingTasksCount() async {
-    final db = await TodoDatabase.db.database;
-    int count = 0;
-    var results = await db.rawQuery(
-      "SELECT COUNT(*) as count FROM Todolists WHERE todotype = 'Shopping'",
-    );
-    results.forEach((element) {
-      count = element['count'];
-    });
-    return count;
-  }
+    _partyCount = await TodoDatabase.db.getPartyTasksCount();
 
-  Future<int> getStudyTasksCount() async {
-    final db = await TodoDatabase.db.database;
-    int count = 0;
-    var results = await db.rawQuery(
-      "SELECT COUNT(*) as count FROM Todolists WHERE todotype = 'Study'",
-    );
-    results.forEach((element) {
-      count = element['count'];
-    });
-    return count;
-  }
-
-  Future<int> getPartyTasksCount() async {
-    final db = await TodoDatabase.db.database;
-    int count = 0;
-    var results = await db.rawQuery(
-      "SELECT COUNT(*) as count FROM Todolists WHERE todotype = 'Party'",
-    );
-    results.forEach((element) {
-      count = element['count'];
-    });
-    return count;
+    _studyCount = await TodoDatabase.db.getStudyTasksCount();
   }
 
   getLatestTask() async {
@@ -147,17 +102,23 @@ class TodotasksDBProvider extends ChangeNotifier {
         "SELECT * FROM Todolists WHERE todostartdate > datetime('now','localtime') ORDER BY todostartdate ASC Limit 1");
 
     if (result.length == 0) {
-      latestTask = null;
+      _latestTask = null;
     } else {
       result.forEach((element) {
-        latestTask = TodoTasksModel.fromMap(element);
+        _latestTask = TodoTasksModel.fromMap(element);
       });
     }
 
-    List<Map> count = await db.rawQuery(
-        "SELECT COUNT(*) as count FROM Todolists WHERE todostartdate > datetime('now','localtime')");
+    List<Map> countList = await db.rawQuery(
+      "SELECT * FROM Todolists where todostartdate > datetime('now','localtime')",
+    );
 
-    tasksCount = count.first['count'];
+    _tasksCount = 0;
+    countList.forEach((element) {
+      TodoTasksModel taskModel = TodoTasksModel.fromMap(element);
+      int index = _dateComparator(taskModel.todoStartDate);
+      if (index == 0) _tasksCount = _tasksCount + 1;
+    });
   }
 
   addNewTask(TodoTasksModel task) async {
@@ -169,7 +130,7 @@ class TodotasksDBProvider extends ChangeNotifier {
     int completed = task.completed ? 0 : 1;
     String todoStartdate = task.todoStartDate.toString();
     var id = maxId.first['last_id'];
-    var result = await db.rawInsert(
+    await db.rawInsert(
       "INSERT INTO Todolists (id, todotype, todoname, setreminder, completed, todostartdate)"
       "VALUES (?, ?, ?, ?, ?, ?)",
       [
@@ -181,8 +142,21 @@ class TodotasksDBProvider extends ChangeNotifier {
         todoStartdate,
       ],
     );
+    await getAllTodotasks();
     notifyListeners();
-    return result;
+  }
+
+  submitForm(BuildContext context, DateTime date, TimeOfDay time,
+      String todoTaskName, String selectedTaskType) {
+    TodoTasksModel tasksModel = new TodoTasksModel(
+      completed: false,
+      setReminder: true,
+      todoName: todoTaskName,
+      todoType: selectedTaskType,
+      todoStartDate:
+          DateTime(date.year, date.month, date.day, time.hour, time.minute),
+    );
+    addNewTask(tasksModel);
   }
 
   deleteTask(TodoTasksModel task) async {
@@ -192,6 +166,7 @@ class TodotasksDBProvider extends ChangeNotifier {
       where: "id = ?",
       whereArgs: [task.todoId],
     );
+    await getAllTodotasks();
     notifyListeners();
   }
 

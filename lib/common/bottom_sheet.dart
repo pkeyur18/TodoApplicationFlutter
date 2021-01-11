@@ -1,5 +1,4 @@
 import 'package:Todo/db/TodotasksDb.dart';
-import 'package:Todo/model/my_tasks.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -13,8 +12,15 @@ class OpenBottomSheet extends StatefulWidget {
 
 class _OpenBottomSheetState extends State<OpenBottomSheet> {
   final _todoTaskName = TextEditingController();
+  var dbhelperProvider;
+  // var dateTimeprovider;
+  // var tasktypeProvider;
+
   @override
   Widget build(BuildContext context) {
+    dbhelperProvider = Provider.of<DBHelper>(context);
+    // dateTimeprovider = Provider.of<TodoDateTimeProvider>(context);
+    // tasktypeProvider = Provider.of<TodoTasktypeSelectorProvider>(context);
     return WillPopScope(
       onWillPop: () => _backButtonPressed(),
       child: SizedBox(
@@ -134,32 +140,32 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
                             widget.selectedTaskType = value._selectedTaskType;
                             return Row(
                               children: [
-                                value._addPersonalSelector(
+                                value.addPersonalSelector(
                                     "Personal", Color(0xFFFFD506)),
                                 SizedBox(
                                   width: 5,
                                 ),
-                                value._addWorkSelector(
+                                value.addWorkSelector(
                                     "Work", Color(0xFF5DE61A)),
                                 SizedBox(
                                   width: 5,
                                 ),
-                                value._addMeetingSelector(
+                                value.addMeetingSelector(
                                     "Meeting", Color(0xFFD10263)),
                                 SizedBox(
                                   width: 5,
                                 ),
-                                value._addStudySelector(
+                                value.addStudySelector(
                                     "Study", Color(0xFF3044F2)),
                                 SizedBox(
                                   width: 5,
                                 ),
-                                value._addShoppingSelector(
+                                value.addShoppingSelector(
                                     "Shopping", Color(0xFFF29130)),
                                 SizedBox(
                                   width: 5,
                                 ),
-                                value._addPartySelector(
+                                value.addPartySelector(
                                     "Party", Color(0xFFF857C3)),
                                 SizedBox(
                                   width: 5,
@@ -288,42 +294,44 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
                             margin: EdgeInsets.only(
                               top: 50,
                             ),
-                            child: Consumer<TodoTasktypeSelectorProvider>(
-                              builder: (context, tasktype, __) => RaisedButton(
-                                onPressed: () {
-                                  _submitForm(
-                                    context,
-                                    value.dateTime,
-                                    value.timeOfDay,
-                                  );
-                                },
-                                color: Color(0xFF),
-                                textColor: Colors.white,
-                                padding: EdgeInsets.all(0.0),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Ink(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                        colors: [
-                                          Color(0xFF7EB6FF),
-                                          Color(0xFF5F87E7),
-                                        ],
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight),
-                                    borderRadius: BorderRadius.circular(10),
+                            child: RaisedButton(
+                              onPressed: () {
+                                dbhelperProvider.submitForm(
+                                  context,
+                                  value.dateTime,
+                                  value.timeOfDay,
+                                  _todoTaskName.text,
+                                  widget.selectedTaskType,
+                                );
+                                _todoTaskName.clear();
+                                Navigator.pop(context);
+                              },
+                              color: Color(0xFF),
+                              textColor: Colors.white,
+                              padding: EdgeInsets.all(0.0),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Ink(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      colors: [
+                                        Color(0xFF7EB6FF),
+                                        Color(0xFF5F87E7),
+                                      ],
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 15,
+                                    horizontal: 70,
                                   ),
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: 15,
-                                      horizontal: 70,
-                                    ),
-                                    child: const Text(
-                                      "Add Task ",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                      ),
+                                  child: const Text(
+                                    "Add Task ",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 15,
                                     ),
                                   ),
                                 ),
@@ -364,23 +372,6 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
     );
   }
 
-  _submitForm(BuildContext context, DateTime date, TimeOfDay time) {
-    TodoTasksModel tasksModel = new TodoTasksModel(
-      completed: false,
-      setReminder: true,
-      todoName: _todoTaskName.text,
-      todoType: widget.selectedTaskType,
-      todoStartDate:
-          DateTime(date.year, date.month, date.day, time.hour, time.minute),
-    );
-
-    var index = TodotasksDBProvider().addNewTask(tasksModel);
-    if (index != null) {
-      _todoTaskName.clear();
-      Navigator.pop(context);
-    }
-  }
-
   Future<bool> _backButtonPressed() {
     return Navigator.maybePop(context);
   }
@@ -395,18 +386,34 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
   }
 }
 
-class TodoDateTimeProvider extends ChangeNotifier {
-  DateTime dateTime = DateTime.now();
-  TimeOfDay timeOfDay = TimeOfDay.fromDateTime(
+class TodoDateTimeProvider with ChangeNotifier {
+  DateTime _dateTime = DateTime.now().add(
+    Duration(hours: 2),
+  );
+  TimeOfDay _timeOfDay = TimeOfDay.fromDateTime(
     DateTime.now().add(
       Duration(hours: 2),
     ),
   );
 
+  DateTime get dateTime => _dateTime;
+
+  TimeOfDay get timeOfDay => _timeOfDay;
+
+  set dateTimeSet(DateTime date) {
+    _dateTime = date;
+    notifyListeners();
+  }
+
+  set timeOdDaySet(TimeOfDay time) {
+    _timeOfDay = time;
+    notifyListeners();
+  }
+
   void openDatePicker(BuildContext context) async {
     var picked = await showDatePicker(
       context: context,
-      initialDate: dateTime,
+      initialDate: _dateTime,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(
         new Duration(days: 1000),
@@ -414,38 +421,42 @@ class TodoDateTimeProvider extends ChangeNotifier {
       currentDate: DateTime.now(),
     );
     if (picked != null) {
-      dateTime = picked;
+      _dateTime = picked;
       notifyListeners();
     } else {
-      dateTime = DateTime.now();
+      _dateTime = DateTime.now();
       notifyListeners();
     }
+
+    openTimePicker(context);
   }
 
   void openTimePicker(BuildContext context) async {
     var picked = await showTimePicker(
       context: context,
-      initialTime: timeOfDay,
+      initialTime: _timeOfDay,
     );
     if (picked != null) {
-      timeOfDay = picked;
-      notifyListeners();
+      _timeOfDay = picked;
     } else {
-      timeOfDay = TimeOfDay.fromDateTime(
+      _timeOfDay = TimeOfDay.fromDateTime(
         DateTime.now().add(
           new Duration(
-            hours: 3,
+            hours: 2,
           ),
         ),
       );
     }
+    notifyListeners();
   }
 }
 
 class TodoTasktypeSelectorProvider extends ChangeNotifier {
   String _selectedTaskType = "Personal";
 
-  Widget _addPersonalSelector(String taskName, Color color) {
+  String get selectedTaskType => _selectedTaskType;
+
+  Widget addPersonalSelector(String taskName, Color color) {
     return GestureDetector(
       onTap: () {
         _selectedTaskType = taskName;
@@ -490,7 +501,7 @@ class TodoTasktypeSelectorProvider extends ChangeNotifier {
     );
   }
 
-  Widget _addWorkSelector(String taskName, Color color) {
+  Widget addWorkSelector(String taskName, Color color) {
     return GestureDetector(
       onTap: () {
         _selectedTaskType = taskName;
@@ -535,7 +546,7 @@ class TodoTasktypeSelectorProvider extends ChangeNotifier {
     );
   }
 
-  Widget _addMeetingSelector(String taskName, Color color) {
+  Widget addMeetingSelector(String taskName, Color color) {
     return GestureDetector(
       onTap: () {
         _selectedTaskType = taskName;
@@ -580,7 +591,7 @@ class TodoTasktypeSelectorProvider extends ChangeNotifier {
     );
   }
 
-  Widget _addStudySelector(String taskName, Color color) {
+  Widget addStudySelector(String taskName, Color color) {
     return GestureDetector(
       onTap: () {
         _selectedTaskType = taskName;
@@ -625,7 +636,7 @@ class TodoTasktypeSelectorProvider extends ChangeNotifier {
     );
   }
 
-  Widget _addShoppingSelector(String taskName, Color color) {
+  Widget addShoppingSelector(String taskName, Color color) {
     return GestureDetector(
       onTap: () {
         _selectedTaskType = taskName;
@@ -670,7 +681,7 @@ class TodoTasktypeSelectorProvider extends ChangeNotifier {
     );
   }
 
-  Widget _addPartySelector(String taskName, Color color) {
+  Widget addPartySelector(String taskName, Color color) {
     return GestureDetector(
       onTap: () {
         _selectedTaskType = taskName;

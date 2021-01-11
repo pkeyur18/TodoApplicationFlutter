@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:Todo/model/my_tasks.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-class TodoDatabase {
+class TodoDatabase with ChangeNotifier {
   TodoDatabase._();
   static final TodoDatabase db = TodoDatabase._();
   static Database _database;
@@ -111,20 +111,75 @@ class TodoDatabase {
     });
   }
 
-  Future<List<TodoTasksModel>> getAllTodotasks() async {
-    final db = await database;
-    List<Map> results = await db.query(
-      "Todolists",
-      columns: TodoTasksModel.columns,
-      orderBy: "id ASC",
+  Future<int> getPersonalTasksCount() async {
+    final db = await TodoDatabase.db.database;
+    int count = 0;
+    var results = await db.rawQuery(
+      "SELECT COUNT(*) as count FROM Todolists WHERE todotype = 'Personal'",
     );
-
-    List<TodoTasksModel> tasks = new List();
-
     results.forEach((element) {
-      TodoTasksModel taskModel = TodoTasksModel.fromMap(element);
-      tasks.add(taskModel);
+      count = element['count'];
     });
-    return tasks;
+    return count;
+  }
+
+  Future<int> getWorkTasksCount() async {
+    final db = await TodoDatabase.db.database;
+    int count = 0;
+    var results = await db.rawQuery(
+      "SELECT COUNT(*) as count FROM Todolists WHERE todotype = 'Work'",
+    );
+    results.forEach((element) {
+      count = element['count'];
+    });
+    return count;
+  }
+
+  Future<int> getMeetingTasksCount() async {
+    final db = await TodoDatabase.db.database;
+    int count = 0;
+    var results = await db.rawQuery(
+      "SELECT COUNT(*) as count FROM Todolists WHERE todotype = 'Meeting'",
+    );
+    results.forEach((element) {
+      count = element['count'];
+    });
+    return count;
+  }
+
+  Future<int> getShoppingTasksCount() async {
+    final db = await TodoDatabase.db.database;
+    int count = 0;
+    var results = await db.rawQuery(
+      "SELECT COUNT(*) as count FROM Todolists WHERE todotype = 'Shopping'",
+    );
+    results.forEach((element) {
+      count = element['count'];
+    });
+    return count;
+  }
+
+  Future<int> getStudyTasksCount() async {
+    final db = await TodoDatabase.db.database;
+    int count = 0;
+    var results = await db.rawQuery(
+      "SELECT COUNT(*) as count FROM Todolists WHERE todotype = 'Study'",
+    );
+    results.forEach((element) {
+      count = element['count'];
+    });
+    return count;
+  }
+
+  Future<int> getPartyTasksCount() async {
+    final db = await TodoDatabase.db.database;
+    int count = 0;
+    var results = await db.rawQuery(
+      "SELECT COUNT(*) as count FROM Todolists WHERE todotype = 'Party'",
+    );
+    results.forEach((element) {
+      count = element['count'];
+    });
+    return count;
   }
 }

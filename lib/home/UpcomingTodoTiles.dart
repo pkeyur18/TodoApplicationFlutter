@@ -2,6 +2,7 @@ import 'package:Todo/db/TodotasksDb.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:provider/provider.dart';
 
 import '../model/my_tasks.dart';
 
@@ -16,8 +17,10 @@ class UpcomingTodoTile extends StatefulWidget {
 }
 
 class _UpcomingTodoTileState extends State<UpcomingTodoTile> {
+  var dbhelperProvider;
   @override
   Widget build(BuildContext context) {
+    dbhelperProvider = Provider.of<DBHelper>(context);
     return Container(
       margin: EdgeInsets.only(
         top: 14,
@@ -172,12 +175,15 @@ class _UpcomingTodoTileState extends State<UpcomingTodoTile> {
         ),
         secondaryActions: <Widget>[
           IconSlideAction(
-            color: Color(0xFF),
-            foregroundColor: Color(0xFFFB3636),
-            closeOnTap: true,
-            icon: Icons.delete,
-            onTap: () => _deleteTask(widget.data),
-          ),
+              color: Color(0xFF),
+              foregroundColor: Color(0xFFFB3636),
+              closeOnTap: true,
+              icon: Icons.delete,
+              onTap: () {
+                dbhelperProvider.deleteTask(
+                  widget.data,
+                );
+              }),
         ],
       ),
     );
@@ -193,9 +199,5 @@ class _UpcomingTodoTileState extends State<UpcomingTodoTile> {
     var now = widget.data.todoStartDate;
     String formattedTime = DateFormat('MMM dd yyyy').format(now);
     return formattedTime;
-  }
-
-  void _deleteTask(TodoTasksModel tasksModel) {
-    TodotasksDBProvider().deleteTask(tasksModel);
   }
 }
