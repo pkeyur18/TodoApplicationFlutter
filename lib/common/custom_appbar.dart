@@ -58,3 +58,50 @@ class CustomAppBar extends StatelessWidget {
     );
   }
 }
+
+class CUstomAppBarForPending extends StatelessWidget {
+  final String _username;
+  final String _imageUrl;
+
+  CUstomAppBarForPending(this._username, this._imageUrl);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(
+        top: 20,
+        bottom: 18,
+        left: 18,
+        right: 18,
+      ),
+      child: Container(
+        height: 40,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  _username,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFFF1F1F1),
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              child: CircleAvatar(
+                backgroundImage: AssetImage(_imageUrl),
+                radius: 20,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

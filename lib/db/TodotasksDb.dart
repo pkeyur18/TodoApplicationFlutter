@@ -2,7 +2,6 @@ import 'package:Todo/db/database.dart';
 import 'package:Todo/model/my_tasks.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-// import 'package:async/async.dart';
 
 class DBHelper with ChangeNotifier {
   List<TodoTasksModel> _tasks = new List();
@@ -10,8 +9,8 @@ class DBHelper with ChangeNotifier {
   List<TodoTasksModel> _tomorrowTasks = new List();
   List<TodoTasksModel> _upcomingTasks = new List();
   List<TodoTasksModel> _pastTasks = new List();
+  List<TodoTasksModel> _tasksByTaskType = new List();
   TodoTasksModel _latestTask;
-  // final AsyncMemoizer _memoizer = AsyncMemoizer();
 
   int _personalCount = 0;
   int _workCount = 0;
@@ -26,6 +25,7 @@ class DBHelper with ChangeNotifier {
   List<TodoTasksModel> get tomorrowTasks => _tomorrowTasks;
   List<TodoTasksModel> get upcomingTasks => _upcomingTasks;
   List<TodoTasksModel> get pastTasks => _pastTasks;
+  List<TodoTasksModel> get tasksbyTaskType => _tasksByTaskType;
 
   TodoTasksModel get latestTask => _latestTask;
 
@@ -99,7 +99,7 @@ class DBHelper with ChangeNotifier {
   getLatestTask() async {
     final db = await TodoDatabase.db.database;
     List<Map> result = await db.rawQuery(
-        "SELECT * FROM Todolists WHERE todostartdate > datetime('now','localtime') ORDER BY todostartdate ASC Limit 1");
+        "SELECT * FROM Todolists WHERE todostartdate > datetime('now','localtime') AND completed = 1 ORDER BY todostartdate ASC Limit 1");
 
     if (result.length == 0) {
       _latestTask = null;
@@ -110,7 +110,7 @@ class DBHelper with ChangeNotifier {
     }
 
     List<Map> countList = await db.rawQuery(
-      "SELECT * FROM Todolists where todostartdate > datetime('now','localtime')",
+      "SELECT * FROM Todolists WHERE todostartdate > datetime('now','localtime') AND completed = 1",
     );
 
     _tasksCount = 0;
@@ -142,15 +142,14 @@ class DBHelper with ChangeNotifier {
         todoStartdate,
       ],
     );
-    await getAllTodotasks();
     notifyListeners();
   }
 
   submitForm(BuildContext context, DateTime date, TimeOfDay time,
-      String todoTaskName, String selectedTaskType) {
+      String todoTaskName, String selectedTaskType, bool setReminder) {
     TodoTasksModel tasksModel = new TodoTasksModel(
       completed: false,
-      setReminder: true,
+      setReminder: setReminder,
       todoName: todoTaskName,
       todoType: selectedTaskType,
       todoStartDate:
@@ -166,7 +165,51 @@ class DBHelper with ChangeNotifier {
       where: "id = ?",
       whereArgs: [task.todoId],
     );
-    await getAllTodotasks();
+    notifyListeners();
+  }
+
+  fetchTasksByTypes(String taskType) async {
+    _tasksByTaskType = [];
+    final db = await TodoDatabase.db.database;
+    List<Map> results = await db.query(
+      "Todolists",
+      columns: TodoTasksModel.columns,
+      orderBy: "todostartdate ASC",
+      where: "todotype = ?",
+      whereArgs: [taskType],
+    );
+    results.forEach((element) {
+      TodoTasksModel model = TodoTasksModel.fromMap(element);
+      _tasksByTaskType.add(model);
+    });
+  }
+
+  getAllPastTasks() async {
+    final db = await TodoDatabase.db.database;
+
+    List<Map> results = await db.rawQuery(
+      "SELECT * FROM Todolists WHERE todostartdate < datetime('now','localtime') AND completed = 1 ORDER BY todostartdate ASC",
+    );
+    _pastTasks = [];
+    results.forEach((element) {
+      TodoTasksModel model = TodoTasksModel.fromMap(element);
+      _pastTasks.add(model);
+    });
+  }
+
+  updateTasksCompletedStatus(int id, bool data) async {
+    final db = await TodoDatabase.db.database;
+    int index = data ? 0 : 1;
+    await db
+        .rawUpdate("UPDATE Todolists SET completed = $index WHERE id = $id");
+    notifyListeners();
+  }
+
+  updateTasksReminderStatus(int id, bool data) async {
+    final db = await TodoDatabase.db.database;
+    int index = data ? 0 : 1;
+    await db
+        .rawUpdate("UPDATE Todolists SET setreminder = $index WHERE id = $id");
     notifyListeners();
   }
 

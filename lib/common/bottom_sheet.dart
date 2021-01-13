@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 // ignore: must_be_immutable
 class OpenBottomSheet extends StatefulWidget {
   String selectedTaskType;
+  bool checkedValue = true;
   @override
   _OpenBottomSheetState createState() => _OpenBottomSheetState();
 }
@@ -13,19 +14,15 @@ class OpenBottomSheet extends StatefulWidget {
 class _OpenBottomSheetState extends State<OpenBottomSheet> {
   final _todoTaskName = TextEditingController();
   var dbhelperProvider;
-  // var dateTimeprovider;
-  // var tasktypeProvider;
 
   @override
   Widget build(BuildContext context) {
     dbhelperProvider = Provider.of<DBHelper>(context);
-    // dateTimeprovider = Provider.of<TodoDateTimeProvider>(context);
-    // tasktypeProvider = Provider.of<TodoTasktypeSelectorProvider>(context);
     return WillPopScope(
       onWillPop: () => _backButtonPressed(),
       child: SizedBox(
-        height: 50,
-        width: 50,
+        height: 60,
+        width: 60,
         child: FloatingActionButton(
           elevation: 5,
           child: Container(
@@ -33,13 +30,13 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
               shape: BoxShape.circle,
               gradient: LinearGradient(
                 colors: [
-                  Color(0xFFF857C3),
-                  Color(0xFFE0139C),
+                  Color(0xFF81C7F5),
+                  Color(0xFF3867D5),
                 ],
               ),
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                  color: Color(0x50F456C3),
+                  color: Color(0x7581C7F5),
                   blurRadius: 20.0,
                   spreadRadius: 0.0,
                   offset: Offset(
@@ -51,7 +48,7 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
             ),
             child: Icon(
               Icons.add,
-              size: 50,
+              size: 60,
             ),
           ),
           onPressed: () {
@@ -74,264 +71,317 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
       builder: (builder) {
         return ChangeNotifierProvider(
           create: (context) => TodoDateTimeProvider(),
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.65,
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: Stack(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.05,
-                    left: 18,
-                    right: 18,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Add new task",
-                        style: TextStyle(
-                          color: Color(0xFF554E8F),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.06,
-                      ),
-                      TextFormField(
-                        controller: _todoTaskName,
-                        style: TextStyle(
-                          fontSize: 15,
-                        ),
-                        keyboardType: TextInputType.text,
-                        cursorColor: Theme.of(context).cursorColor,
-                        maxLength: 50,
-                        decoration: InputDecoration(
-                          labelText: 'Task name',
-                          hintText: 'Go jogging with Christin',
-                          labelStyle: TextStyle(
-                            fontSize: 14,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.75,
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom + 15,
+              ),
+              child: Stack(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.05,
+                      left: 18,
+                      right: 18,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Add new task",
+                          style: TextStyle(
                             color: Color(0xFF554E8F),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
                           ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.06,
+                        ),
+                        TextFormField(
+                          controller: _todoTaskName,
+                          style: TextStyle(
+                            fontSize: 15,
+                          ),
+                          keyboardType: TextInputType.text,
+                          cursorColor: Theme.of(context).cursorColor,
+                          maxLength: 50,
+                          decoration: InputDecoration(
+                            labelText: 'Task name',
+                            hintText: 'Go jogging with Christin',
+                            labelStyle: TextStyle(
+                              fontSize: 14,
                               color: Color(0xFF554E8F),
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color(0xFF554E8F),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                          vertical: 12,
+                        Container(
+                          margin: EdgeInsets.symmetric(
+                            vertical: 12,
+                          ),
+                          child: Divider(
+                            color: Color(0xFFCFCFCF),
+                          ),
                         ),
-                        child: Divider(
-                          color: Color(0xFFCFCFCF),
+                        ChangeNotifierProvider(
+                          create: (context) => TodoTasktypeSelectorProvider(),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Consumer<TodoTasktypeSelectorProvider>(
+                                builder: (context, value, child) {
+                              widget.selectedTaskType = value._selectedTaskType;
+                              return Row(
+                                children: [
+                                  value.addPersonalSelector(
+                                      "Personal", Color(0xFFFFD506)),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  value.addWorkSelector(
+                                      "Work", Color(0xFF5DE61A)),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  value.addMeetingSelector(
+                                      "Meeting", Color(0xFFD10263)),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  value.addStudySelector(
+                                      "Study", Color(0xFF3044F2)),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  value.addShoppingSelector(
+                                      "Shopping", Color(0xFFF29130)),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  value.addPartySelector(
+                                      "Party", Color(0xFFF857C3)),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                ],
+                              );
+                            }),
+                          ),
                         ),
-                      ),
-                      ChangeNotifierProvider(
-                        create: (context) => TodoTasktypeSelectorProvider(),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Consumer<TodoTasktypeSelectorProvider>(
-                              builder: (context, value, child) {
-                            widget.selectedTaskType = value._selectedTaskType;
-                            return Row(
+                        Container(
+                          margin: EdgeInsets.symmetric(
+                            vertical: 12,
+                          ),
+                          child: Divider(
+                            color: Color(0xFFCFCFCF),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.symmetric(
+                            vertical: 20,
+                          ),
+                          child: Consumer<TodoDateTimeProvider>(
+                            builder: (context, value, child) => Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                value.addPersonalSelector(
-                                    "Personal", Color(0xFFFFD506)),
-                                SizedBox(
-                                  width: 5,
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Provider.of<TodoDateTimeProvider>(
+                                                context,
+                                                listen: false)
+                                            .openDatePicker(context);
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            "Choose date",
+                                            style: TextStyle(
+                                              color: Color(0xFF554E8F),
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                          ),
+                                          Container(
+                                            margin: EdgeInsets.only(
+                                              left: 15,
+                                            ),
+                                            child: Icon(
+                                              Icons.arrow_drop_down,
+                                              color: Color(0xFF554E8F),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                        top: 10,
+                                      ),
+                                      child: Text(
+                                        dateFormatter(value.dateTime),
+                                        style: TextStyle(
+                                          color: Color(0xFF404040),
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w800,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                value.addWorkSelector(
-                                    "Work", Color(0xFF5DE61A)),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                value.addMeetingSelector(
-                                    "Meeting", Color(0xFFD10263)),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                value.addStudySelector(
-                                    "Study", Color(0xFF3044F2)),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                value.addShoppingSelector(
-                                    "Shopping", Color(0xFFF29130)),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                value.addPartySelector(
-                                    "Party", Color(0xFFF857C3)),
-                                SizedBox(
-                                  width: 5,
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Provider.of<TodoDateTimeProvider>(
+                                                context,
+                                                listen: false)
+                                            .openTimePicker(context);
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            "Choose time",
+                                            style: TextStyle(
+                                              color: Color(0xFF554E8F),
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                          ),
+                                          Container(
+                                            margin: EdgeInsets.only(
+                                              left: 15,
+                                            ),
+                                            child: Icon(
+                                              Icons.arrow_drop_down,
+                                              color: Color(0xFF554E8F),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                        top: 10,
+                                      ),
+                                      child: Text(
+                                        _timeFormatter(value.timeOfDay),
+                                        style: TextStyle(
+                                          color: Color(0xFF404040),
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w800,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
-                            );
-                          }),
+                            ),
+                          ),
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                          vertical: 12,
+                        Container(
+                          margin: EdgeInsets.symmetric(
+                            vertical: 6,
+                          ),
                         ),
-                        child: Divider(
-                          color: Color(0xFFCFCFCF),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                          vertical: 20,
-                        ),
-                        child: Consumer<TodoDateTimeProvider>(
-                          builder: (context, value, child) => Row(
+                        ChangeNotifierProvider(
+                          create: (context) => TodosetreminderProvider(),
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      Provider.of<TodoDateTimeProvider>(context,
-                                              listen: false)
-                                          .openDatePicker(context);
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          "Choose date",
-                                          style: TextStyle(
-                                            color: Color(0xFF554E8F),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w800,
-                                          ),
+                              Consumer<TodosetreminderProvider>(
+                                builder: (_, value, __) => GestureDetector(
+                                  onTap: () {
+                                    value.setreminderSet(!value.setreminder);
+                                    widget.checkedValue = value.setreminder;
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "Set Reminder?",
+                                        style: TextStyle(
+                                          color: Color(0xFF554E8F),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w800,
                                         ),
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                            left: 15,
-                                          ),
-                                          child: Icon(
-                                            Icons.arrow_drop_down,
-                                            color: Color(0xFF554E8F),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                      top: 10,
-                                    ),
-                                    child: Text(
-                                      dateFormatter(value.dateTime),
-                                      style: TextStyle(
-                                        color: Color(0xFF404040),
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w800,
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      Provider.of<TodoDateTimeProvider>(context,
-                                              listen: false)
-                                          .openTimePicker(context);
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          "Choose time",
-                                          style: TextStyle(
-                                            color: Color(0xFF554E8F),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w800,
-                                          ),
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                          left: 12.0,
                                         ),
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                            left: 15,
-                                          ),
-                                          child: Icon(
-                                            Icons.arrow_drop_down,
-                                            color: Color(0xFF554E8F),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                      top: 10,
-                                    ),
-                                    child: Text(
-                                      _timeFormatter(value.timeOfDay),
-                                      style: TextStyle(
-                                        color: Color(0xFF404040),
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w800,
                                       ),
-                                    ),
+                                      Icon(
+                                        value.setreminder
+                                            ? Icons.check_circle
+                                            : Icons.radio_button_unchecked,
+                                        color: value.setreminder
+                                            ? Color(0xFF91DC5A)
+                                            : Color(0xFFD9D9D9),
+                                        size: 18.0,
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
                             ],
                           ),
                         ),
-                      ),
-                      ChangeNotifierProvider(
-                        create: (context) => TodoTasktypeSelectorProvider(),
-                        child: Consumer<TodoDateTimeProvider>(
-                          builder: (context, value, __) => Container(
-                            margin: EdgeInsets.only(
-                              top: 50,
-                            ),
-                            child: RaisedButton(
-                              onPressed: () {
-                                dbhelperProvider.submitForm(
-                                  context,
-                                  value.dateTime,
-                                  value.timeOfDay,
-                                  _todoTaskName.text,
-                                  widget.selectedTaskType,
-                                );
-                                _todoTaskName.clear();
-                                Navigator.pop(context);
-                              },
-                              color: Color(0xFF),
-                              textColor: Colors.white,
-                              padding: EdgeInsets.all(0.0),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Ink(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                      colors: [
-                                        Color(0xFF7EB6FF),
-                                        Color(0xFF5F87E7),
-                                      ],
-                                      begin: Alignment.centerLeft,
-                                      end: Alignment.centerRight),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 15,
-                                    horizontal: 70,
+                        ChangeNotifierProvider(
+                          create: (context) => TodoTasktypeSelectorProvider(),
+                          child: Consumer<TodoDateTimeProvider>(
+                            builder: (context, value, __) => Container(
+                              margin: EdgeInsets.only(
+                                top: 50,
+                              ),
+                              child: RaisedButton(
+                                onPressed: () {
+                                  dbhelperProvider.submitForm(
+                                    context,
+                                    value.dateTime,
+                                    value.timeOfDay,
+                                    _todoTaskName.text,
+                                    widget.selectedTaskType,
+                                    widget.checkedValue,
+                                  );
+                                  _todoTaskName.clear();
+                                  Navigator.pop(context);
+                                },
+                                color: Color(0xFF),
+                                textColor: Colors.white,
+                                padding: EdgeInsets.all(0.0),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Ink(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                        colors: [
+                                          Color(0xFF7EB6FF),
+                                          Color(0xFF5F87E7),
+                                        ],
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                  child: const Text(
-                                    "Add Task ",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 15,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 15,
+                                      horizontal: 70,
+                                    ),
+                                    child: const Text(
+                                      "Add Task ",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -339,32 +389,32 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.05,
-                    right: MediaQuery.of(context).size.width * 0.075,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          _todoTaskName.clear();
-                          Navigator.pop(context);
-                        },
-                        child: Icon(
-                          Icons.clear,
-                          size: 18,
+                  Container(
+                    margin: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.05,
+                      right: MediaQuery.of(context).size.width * 0.075,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            _todoTaskName.clear();
+                            Navigator.pop(context);
+                          },
+                          child: Icon(
+                            Icons.clear,
+                            size: 18,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
@@ -447,6 +497,17 @@ class TodoDateTimeProvider with ChangeNotifier {
         ),
       );
     }
+    notifyListeners();
+  }
+}
+
+class TodosetreminderProvider with ChangeNotifier {
+  bool _setreminder = true;
+
+  bool get setreminder => _setreminder;
+
+  setreminderSet(bool value) {
+    _setreminder = value;
     notifyListeners();
   }
 }

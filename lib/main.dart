@@ -1,4 +1,4 @@
-// import 'package:Todo/common/bottom_sheet.dart';
+import 'package:Todo/todoTasksGroup/allTasksTiles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -29,6 +29,7 @@ class MyTodoApp extends StatelessWidget {
         routes: {
           '/landing': (context) => LandingPage(),
           '/homepage': (context) => HomeTasksPage(),
+          '/tasktilepage': (context) => AllTasksTilesPage(),
         },
         debugShowCheckedModeBanner: false,
         key: _scaffoldKey,

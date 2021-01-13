@@ -120,7 +120,7 @@ class _HomeNotificationState extends State<HomeNotification> {
 
   String _dateFormatter() {
     var now = widget.todoTask.todoStartDate;
-    String formattedTime = DateFormat('hh:mm a').format(now);
+    String formattedTime = DateFormat('hh:mm a, MMM dd yyyy').format(now);
     return formattedTime;
   }
 }
