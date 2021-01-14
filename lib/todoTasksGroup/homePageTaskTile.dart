@@ -1,7 +1,6 @@
-import 'package:Todo/db/TodotasksDb.dart';
+import 'package:Todo/db/databaseHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
 import '../model/my_tasks.dart';
@@ -26,9 +25,68 @@ class _CustomTodoTileState extends State<CustomTodoTile> {
         top: 14,
       ),
       height: 55,
-      child: Slidable(
-        actionPane: SlidableDrawerActionPane(),
-        actionExtentRatio: 0.20,
+      child: Dismissible(
+        onDismissed: (direction) {
+          dbhelperProvider.deleteTask(
+            widget.data,
+          );
+          Scaffold.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "${widget.data.todoName} dismissed",
+              ),
+            ),
+          );
+        },
+        key: UniqueKey(),
+        confirmDismiss: (DismissDirection direction) async {
+          return await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12.0),
+                  ),
+                ),
+                title: const Text(
+                  "Delete Confirmation",
+                ),
+                content: Text(
+                  "Are you sure you want to delete task ${widget.data.todoName} ?",
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text(
+                      "Cancel",
+                      style: TextStyle(
+                        color: Color(0xFF838383),
+                      ),
+                    ),
+                  ),
+                  FlatButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: const Text(
+                      "Delete",
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        background: Container(
+          alignment: AlignmentDirectional.centerEnd,
+          color: Color(0xFFFFCFCF),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
+            child: Icon(
+              Icons.delete,
+              color: Color(0xFFFB3636),
+            ),
+          ),
+        ),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -170,19 +228,6 @@ class _CustomTodoTileState extends State<CustomTodoTile> {
             ],
           ),
         ),
-        secondaryActions: <Widget>[
-          IconSlideAction(
-            color: Color(0xFF),
-            foregroundColor: Color(0xFFFB3636),
-            closeOnTap: true,
-            icon: Icons.delete,
-            onTap: () {
-              dbhelperProvider.deleteTask(
-                widget.data,
-              );
-            },
-          ),
-        ],
       ),
     );
   }

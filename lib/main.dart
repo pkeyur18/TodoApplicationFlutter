@@ -1,11 +1,11 @@
-import 'package:Todo/todoTasksGroup/allTasksTiles.dart';
+import 'package:Todo/todoTasksGroup/taskGroupbyCategory.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import './landing_page.dart';
-import 'package:Todo/home/home_page.dart';
+import 'landingPage.dart';
+import 'package:Todo/home/homePage.dart';
 
-import 'db/TodotasksDb.dart';
+import 'db/databaseHelper.dart';
 import 'db/database.dart';
 
 void main() => runApp(MyTodoApp());

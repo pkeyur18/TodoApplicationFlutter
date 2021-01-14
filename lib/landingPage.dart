@@ -12,9 +12,8 @@ class LandingPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Image.asset(
-                'assets/images/landingnotes.png',
-                width: 186,
-                height: 201,
+                'assets/images/notelist.png',
+                width: MediaQuery.of(context).size.width * 0.65,
               ),
               Container(
                 margin: EdgeInsets.only(top: 100),

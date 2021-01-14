@@ -1,4 +1,4 @@
-import 'package:Todo/db/TodotasksDb.dart';
+import 'package:Todo/db/databaseHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -20,41 +20,17 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
     dbhelperProvider = Provider.of<DBHelper>(context);
     return WillPopScope(
       onWillPop: () => _backButtonPressed(),
-      child: SizedBox(
-        height: 60,
-        width: 60,
-        child: FloatingActionButton(
-          elevation: 5,
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xFF81C7F5),
-                  Color(0xFF3867D5),
-                ],
-              ),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: Color(0x7581C7F5),
-                  blurRadius: 20.0,
-                  spreadRadius: 0.0,
-                  offset: Offset(
-                    0,
-                    7,
-                  ),
-                ),
-              ],
-            ),
-            child: Icon(
-              Icons.add,
-              size: 60,
-            ),
+      child: FloatingActionButton(
+        elevation: 5,
+        child: Container(
+          child: Icon(
+            Icons.add,
+            size: 30,
           ),
-          onPressed: () {
-            _showMyBottomSheet();
-          },
         ),
+        onPressed: () {
+          _showMyBottomSheet();
+        },
       ),
     );
   }
@@ -74,7 +50,7 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.75,
+              height: MediaQuery.of(context).size.height * 0.70,
               padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom + 15,
               ),
@@ -377,7 +353,7 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
                                       horizontal: 70,
                                     ),
                                     child: const Text(
-                                      "Add Task ",
+                                      "Schedule",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 15,

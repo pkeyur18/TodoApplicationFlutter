@@ -1,7 +1,7 @@
-import 'package:Todo/home/UpcomingTodoTiles.dart';
+import 'package:Todo/todoTasksGroup/homePageUpcomingTaskTile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:Todo/db/TodotasksDb.dart';
+import 'package:Todo/db/databaseHelper.dart';
 
 class AllTasksTilesPage extends StatefulWidget {
   AllTasksTilesPage({Key key}) : super(key: key);
