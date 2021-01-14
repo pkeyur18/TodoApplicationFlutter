@@ -10,8 +10,6 @@ import 'package:Todo/db/databaseHelper.dart';
 
 // ignore: must_be_immutable
 class HomeTasksPage extends StatefulWidget {
-  int _selectedIndex = 0;
-
   @override
   _HomeTasksPageState createState() => _HomeTasksPageState();
 }
@@ -19,12 +17,52 @@ class HomeTasksPage extends StatefulWidget {
 class _HomeTasksPageState extends State<HomeTasksPage> {
   var tabs = [];
   var dbhelperProvider;
+  int selectedIndex = 0;
 
   void _tabSelector() {
     tabs = [];
     tabs.add(HomePageDashboard());
     tabs.add(TaskPageDashboard());
     tabs.add(PendingPageDashboard());
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  PageController pageController = PageController(
+    initialPage: 0,
+    keepPage: true,
+  );
+
+  Widget buildPageView() {
+    return PageView(
+      controller: pageController,
+      onPageChanged: (value) => pageChanged(value),
+      children: <Widget>[
+        HomePageDashboard(),
+        TaskPageDashboard(),
+        PendingPageDashboard(),
+      ],
+    );
+  }
+
+  void pageChanged(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
+  void bottomTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+      pageController.animateToPage(
+        index,
+        duration: Duration(milliseconds: 500),
+        curve: Curves.ease,
+      );
+    });
   }
 
   @override
@@ -41,7 +79,7 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
         child: Scaffold(
           body: Container(
             child: Container(
-              child: tabs[widget._selectedIndex],
+              child: buildPageView(),
             ),
           ),
           bottomNavigationBar: _customBottomBar(),
@@ -54,12 +92,11 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
 
   Widget _customBottomBar() {
     return BottomNavigationBar(
-      backgroundColor: Colors.white,
       selectedItemColor: Colors.blue,
       unselectedItemColor: Color(0xFFBEBEBE),
-      currentIndex: widget._selectedIndex,
+      currentIndex: selectedIndex,
       type: BottomNavigationBarType.fixed,
-      onTap: _onItemTaped,
+      onTap: (value) => bottomTapped(value),
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
@@ -70,18 +107,10 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
           label: 'Tasks',
         ),
         BottomNavigationBarItem(
-          icon: Icon(
-            Icons.pending_actions,
-          ),
+          icon: Icon(Icons.pending_actions),
           label: 'Pending',
         ),
       ],
     );
-  }
-
-  void _onItemTaped(int index) {
-    setState(() {
-      widget._selectedIndex = index;
-    });
   }
 }
