@@ -1,3 +1,4 @@
+// import 'package:Todo/common/customBottomSheet.dart';
 import 'package:Todo/db/databaseHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -5,9 +6,13 @@ import 'package:provider/provider.dart';
 
 import '../model/my_tasks.dart';
 
+// ignore: must_be_immutable
 class CustomTodoTile extends StatefulWidget {
   final TodoTasksModel data;
   final DateTime today = DateTime.now();
+
+  String selectedTaskType;
+  bool checkedValue = true;
 
   CustomTodoTile(this.data);
 
@@ -16,6 +21,7 @@ class CustomTodoTile extends StatefulWidget {
 }
 
 class _CustomTodoTileState extends State<CustomTodoTile> {
+  // final _todoTaskName = TextEditingController();
   var dbhelperProvider;
   @override
   Widget build(BuildContext context) {
@@ -203,9 +209,6 @@ class _CustomTodoTileState extends State<CustomTodoTile> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(
-                      right: 10,
-                    ),
                     child: GestureDetector(
                       onTap: () {
                         setState(() {
@@ -220,6 +223,21 @@ class _CustomTodoTileState extends State<CustomTodoTile> {
                             ? Color(0xFFFFDC00)
                             : Color(0xFFD9D9D9),
                         size: 20,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                      right: 10,
+                    ),
+                    child: GestureDetector(
+                      onTap: () {
+                        // _openBottomsheetForEdit();
+                      },
+                      child: Icon(
+                        Icons.edit,
+                        size: 20,
+                        color: Colors.black38,
                       ),
                     ),
                   ),

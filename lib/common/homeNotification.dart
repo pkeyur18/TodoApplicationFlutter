@@ -69,9 +69,15 @@ class _HomeNotificationState extends State<HomeNotification> {
                                 SizedBox(
                                   height: 8,
                                 ),
-                                Text(
-                                  widget.todoTask.todoName,
-                                  style: _subHeadingStyles,
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.54,
+                                  child: Text(
+                                    widget.todoTask.todoName,
+                                    style: _subHeadingStyles,
+                                    overflow: TextOverflow.clip,
+                                    softWrap: true,
+                                  ),
                                 ),
                                 SizedBox(
                                   height: 5,

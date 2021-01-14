@@ -1,4 +1,5 @@
 import 'package:Todo/db/databaseHelper.dart';
+import 'package:Todo/todoTasksGroup/taskEditPage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -186,11 +187,11 @@ class _UpcomingTodoTileState extends State<UpcomingTodoTile> {
                           margin: EdgeInsets.only(
                             left: 10,
                           ),
-                          width: MediaQuery.of(context).size.width * 0.45,
+                          width: MediaQuery.of(context).size.width * 0.40,
                           child: Text(
                             widget.data.todoName,
-                            overflow: TextOverflow.ellipsis,
-                            softWrap: false,
+                            // overflow: TextOverflow.ellipsis,
+                            softWrap: true,
                             style: widget.data.completed
                                 ? TextStyle(
                                     color: Color(0xFFD9D9D9),
@@ -209,9 +210,6 @@ class _UpcomingTodoTileState extends State<UpcomingTodoTile> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(
-                      right: 10,
-                    ),
                     child: GestureDetector(
                       onTap: () {
                         dbhelperProvider.updateTasksReminderStatus(
@@ -222,6 +220,19 @@ class _UpcomingTodoTileState extends State<UpcomingTodoTile> {
                         color: widget.data.setReminder
                             ? Color(0xFFFFDC00)
                             : Color(0xFFD9D9D9),
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                      right: 10,
+                    ),
+                    child: GestureDetector(
+                      onTap: () => TaskEditPage(),
+                      child: Icon(
+                        Icons.edit,
+                        color: Colors.black38,
                         size: 20,
                       ),
                     ),
