@@ -1,23 +1,22 @@
 import 'package:Todo/db/databaseHelper.dart';
-import 'package:Todo/todoTasksGroup/taskEditPage.dart';
+import 'package:Todo/model/my_tasks.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../model/my_tasks.dart';
-
-class UpcomingTodoTile extends StatefulWidget {
+class TaskGroupbyCategoryTiles extends StatefulWidget {
   final TodoTasksModel data;
   final DateTime today = DateTime.now();
 
-  UpcomingTodoTile(this.data);
-
+  TaskGroupbyCategoryTiles(this.data);
   @override
-  _UpcomingTodoTileState createState() => _UpcomingTodoTileState();
+  _TaskGroupbyCategoryTilesState createState() =>
+      _TaskGroupbyCategoryTilesState();
 }
 
-class _UpcomingTodoTileState extends State<UpcomingTodoTile> {
+class _TaskGroupbyCategoryTilesState extends State<TaskGroupbyCategoryTiles> {
   var dbhelperProvider;
+
   @override
   Widget build(BuildContext context) {
     dbhelperProvider = Provider.of<DBHelper>(context);
@@ -232,6 +231,9 @@ class _UpcomingTodoTileState extends State<UpcomingTodoTile> {
                     ),
                   ),
                   Container(
+                    margin: EdgeInsets.only(
+                      right: 10,
+                    ),
                     child: GestureDetector(
                       onTap: () {
                         dbhelperProvider.updateTasksReminderStatus(
@@ -245,12 +247,6 @@ class _UpcomingTodoTileState extends State<UpcomingTodoTile> {
                         size: 20,
                       ),
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(
-                      right: 10,
-                    ),
-                    child: TaskEditPage(widget.data),
                   ),
                 ],
               ),

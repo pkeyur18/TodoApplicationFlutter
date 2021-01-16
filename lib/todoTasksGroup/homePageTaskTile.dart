@@ -1,5 +1,6 @@
 // import 'package:Todo/common/customBottomSheet.dart';
 import 'package:Todo/db/databaseHelper.dart';
+import 'package:Todo/todoTasksGroup/taskEditPage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +22,6 @@ class CustomTodoTile extends StatefulWidget {
 }
 
 class _CustomTodoTileState extends State<CustomTodoTile> {
-  // final _todoTaskName = TextEditingController();
   var dbhelperProvider;
   @override
   Widget build(BuildContext context) {
@@ -75,6 +75,9 @@ class _CustomTodoTileState extends State<CustomTodoTile> {
                     onPressed: () => Navigator.of(context).pop(true),
                     child: const Text(
                       "Delete",
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
                     ),
                   ),
                 ],
@@ -84,12 +87,26 @@ class _CustomTodoTileState extends State<CustomTodoTile> {
         },
         background: Container(
           alignment: AlignmentDirectional.centerEnd,
-          color: Color(0xFFFFCFCF),
           child: Padding(
             padding: EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
-            child: Icon(
-              Icons.delete,
-              color: Color(0xFFFB3636),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Icon(
+                  Icons.delete,
+                  color: Color(0xFFFB3636),
+                ),
+                SizedBox(
+                  width: 8.0,
+                ),
+                Text(
+                  "Delete",
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -230,16 +247,7 @@ class _CustomTodoTileState extends State<CustomTodoTile> {
                     margin: EdgeInsets.only(
                       right: 10,
                     ),
-                    child: GestureDetector(
-                      onTap: () {
-                        // _openBottomsheetForEdit();
-                      },
-                      child: Icon(
-                        Icons.edit,
-                        size: 20,
-                        color: Colors.black38,
-                      ),
-                    ),
+                    child: TaskEditPage(widget.data),
                   ),
                 ],
               ),

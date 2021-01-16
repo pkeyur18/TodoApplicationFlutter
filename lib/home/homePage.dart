@@ -57,11 +57,11 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
   void bottomTapped(int index) {
     setState(() {
       selectedIndex = index;
-      pageController.animateToPage(
-        index,
-        duration: Duration(milliseconds: 500),
-        curve: Curves.ease,
-      );
+      // pageController.animateToPage(
+      //   index,
+      //   duration: Duration(milliseconds: 500),
+      //   curve: Curves.ease,
+      // );
     });
   }
 
@@ -79,7 +79,7 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
         child: Scaffold(
           body: Container(
             child: Container(
-              child: buildPageView(),
+              child: tabs[selectedIndex],
             ),
           ),
           bottomNavigationBar: _customBottomBar(),

@@ -145,8 +145,8 @@ class DBHelper with ChangeNotifier {
     notifyListeners();
   }
 
-  submitForm(BuildContext context, DateTime date, TimeOfDay time,
-      String todoTaskName, String selectedTaskType, bool setReminder) {
+  submitForm(DateTime date, TimeOfDay time, String todoTaskName,
+      String selectedTaskType, bool setReminder) {
     TodoTasksModel tasksModel = new TodoTasksModel(
       completed: false,
       setReminder: setReminder,
@@ -211,6 +211,34 @@ class DBHelper with ChangeNotifier {
     await db
         .rawUpdate("UPDATE Todolists SET setreminder = $index WHERE id = $id");
     notifyListeners();
+  }
+
+  updateTask(TodoTasksModel tasksModel) async {
+    final db = await TodoDatabase.db.database;
+
+    var row = tasksModel.toMap();
+
+    await db.update(
+      "Todolists",
+      row,
+      where: "id = ?",
+      whereArgs: [tasksModel.todoId],
+    );
+    notifyListeners();
+  }
+
+  submitEditForm(int id, DateTime date, TimeOfDay time, String todoTaskName,
+      String selectedTaskType, bool setReminder) {
+    TodoTasksModel tasksModel = new TodoTasksModel(
+      todoId: id,
+      completed: false,
+      setReminder: setReminder,
+      todoName: todoTaskName,
+      todoType: selectedTaskType,
+      todoStartDate:
+          DateTime(date.year, date.month, date.day, time.hour, time.minute),
+    );
+    updateTask(tasksModel);
   }
 
   int _dateComparator(DateTime todoStartDate) {

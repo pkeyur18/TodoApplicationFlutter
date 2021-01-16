@@ -74,6 +74,9 @@ class _PendingPageDashboardState extends State<PendingPageDashboard> {
                                 children: [
                                   for (var item in dbhelperProvider.pastTasks)
                                     UpcomingTodoTile(item),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
                                 ],
                               )
                             : SizedBox.shrink(),

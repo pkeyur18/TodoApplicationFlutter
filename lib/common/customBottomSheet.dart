@@ -1,4 +1,7 @@
 import 'package:Todo/db/databaseHelper.dart';
+import 'package:Todo/providers/todoDateTimeProvider.dart';
+import 'package:Todo/providers/todoSetreminderProvider.dart';
+import 'package:Todo/providers/todoTasktypeSelectorProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -46,7 +49,10 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
       ),
       builder: (builder) {
         return ChangeNotifierProvider(
-          create: (context) => TodoDateTimeProvider(),
+          create: (context) => TodoDateTimeProvider(
+            DateTime.now().add(Duration(hours: 1)),
+            TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 1))),
+          ),
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Container(
@@ -107,12 +113,13 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
                           ),
                         ),
                         ChangeNotifierProvider(
-                          create: (context) => TodoTasktypeSelectorProvider(),
+                          create: (context) =>
+                              TodoTasktypeSelectorProvider("Personal"),
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Consumer<TodoTasktypeSelectorProvider>(
                                 builder: (context, value, child) {
-                              widget.selectedTaskType = value._selectedTaskType;
+                              widget.selectedTaskType = value.selectedTaskType;
                               return Row(
                                 children: [
                                   value.addPersonalSelector(
@@ -270,7 +277,7 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
                           ),
                         ),
                         ChangeNotifierProvider(
-                          create: (context) => TodosetreminderProvider(),
+                          create: (context) => TodosetreminderProvider(true),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -312,7 +319,8 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
                           ),
                         ),
                         ChangeNotifierProvider(
-                          create: (context) => TodoTasktypeSelectorProvider(),
+                          create: (context) =>
+                              TodoTasktypeSelectorProvider("Personal"),
                           child: Consumer<TodoDateTimeProvider>(
                             builder: (context, value, __) => Container(
                               margin: EdgeInsets.only(
@@ -321,7 +329,6 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
                               child: RaisedButton(
                                 onPressed: () {
                                   dbhelperProvider.submitForm(
-                                    context,
                                     value.dateTime,
                                     value.timeOfDay,
                                     _todoTaskName.text,
@@ -383,7 +390,7 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
                           },
                           child: Icon(
                             Icons.clear,
-                            size: 18,
+                            size: 24,
                           ),
                         ),
                       ],
@@ -409,357 +416,5 @@ class _OpenBottomSheetState extends State<OpenBottomSheet> {
 
   String _timeFormatter(TimeOfDay time) {
     return time.format(context);
-  }
-}
-
-class TodoDateTimeProvider with ChangeNotifier {
-  DateTime _dateTime = DateTime.now().add(
-    Duration(hours: 2),
-  );
-  TimeOfDay _timeOfDay = TimeOfDay.fromDateTime(
-    DateTime.now().add(
-      Duration(hours: 2),
-    ),
-  );
-
-  DateTime get dateTime => _dateTime;
-
-  TimeOfDay get timeOfDay => _timeOfDay;
-
-  set dateTimeSet(DateTime date) {
-    _dateTime = date;
-    notifyListeners();
-  }
-
-  set timeOdDaySet(TimeOfDay time) {
-    _timeOfDay = time;
-    notifyListeners();
-  }
-
-  void openDatePicker(BuildContext context) async {
-    var picked = await showDatePicker(
-      context: context,
-      initialDate: _dateTime,
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(
-        new Duration(days: 1000),
-      ),
-      currentDate: DateTime.now(),
-    );
-    if (picked != null) {
-      _dateTime = picked;
-      notifyListeners();
-    } else {
-      _dateTime = DateTime.now();
-      notifyListeners();
-    }
-
-    openTimePicker(context);
-  }
-
-  void openTimePicker(BuildContext context) async {
-    var picked = await showTimePicker(
-      context: context,
-      initialTime: _timeOfDay,
-    );
-    if (picked != null) {
-      _timeOfDay = picked;
-    } else {
-      _timeOfDay = TimeOfDay.fromDateTime(
-        DateTime.now().add(
-          new Duration(
-            hours: 2,
-          ),
-        ),
-      );
-    }
-    notifyListeners();
-  }
-}
-
-class TodosetreminderProvider with ChangeNotifier {
-  bool _setreminder = true;
-
-  bool get setreminder => _setreminder;
-
-  setreminderSet(bool value) {
-    _setreminder = value;
-    notifyListeners();
-  }
-}
-
-class TodoTasktypeSelectorProvider extends ChangeNotifier {
-  String _selectedTaskType = "Personal";
-
-  String get selectedTaskType => _selectedTaskType;
-
-  Widget addPersonalSelector(String taskName, Color color) {
-    return GestureDetector(
-      onTap: () {
-        _selectedTaskType = taskName;
-        notifyListeners();
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(
-            Radius.circular(10),
-          ),
-          color: _selectedTaskType == taskName ? color : Color(0xFF),
-        ),
-        padding: const EdgeInsets.symmetric(
-          vertical: 10,
-          horizontal: 15,
-        ),
-        child: Row(
-          children: [
-            _selectedTaskType != taskName
-                ? CircleAvatar(
-                    backgroundColor: color,
-                    radius: 6,
-                  )
-                : SizedBox.shrink(),
-            _selectedTaskType != taskName
-                ? SizedBox(
-                    width: 8,
-                  )
-                : SizedBox.shrink(),
-            Text(
-              taskName,
-              style: TextStyle(
-                color: _selectedTaskType == taskName
-                    ? Color(0xFFFFFFFF)
-                    : Color(0xFF8E8E8E),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget addWorkSelector(String taskName, Color color) {
-    return GestureDetector(
-      onTap: () {
-        _selectedTaskType = taskName;
-        notifyListeners();
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(
-            Radius.circular(10),
-          ),
-          color: _selectedTaskType == taskName ? color : Color(0xFF),
-        ),
-        padding: const EdgeInsets.symmetric(
-          vertical: 10,
-          horizontal: 10,
-        ),
-        child: Row(
-          children: [
-            _selectedTaskType != taskName
-                ? CircleAvatar(
-                    backgroundColor: color,
-                    radius: 6,
-                  )
-                : SizedBox.shrink(),
-            _selectedTaskType != taskName
-                ? SizedBox(
-                    width: 8,
-                  )
-                : SizedBox.shrink(),
-            Text(
-              taskName,
-              style: TextStyle(
-                color: _selectedTaskType == taskName
-                    ? Color(0xFFFFFFFF)
-                    : Color(0xFF8E8E8E),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget addMeetingSelector(String taskName, Color color) {
-    return GestureDetector(
-      onTap: () {
-        _selectedTaskType = taskName;
-        notifyListeners();
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(
-            Radius.circular(10),
-          ),
-          color: _selectedTaskType == taskName ? color : Color(0xFF),
-        ),
-        padding: const EdgeInsets.symmetric(
-          vertical: 10,
-          horizontal: 10,
-        ),
-        child: Row(
-          children: [
-            _selectedTaskType != taskName
-                ? CircleAvatar(
-                    backgroundColor: color,
-                    radius: 6,
-                  )
-                : SizedBox.shrink(),
-            _selectedTaskType != taskName
-                ? SizedBox(
-                    width: 8,
-                  )
-                : SizedBox.shrink(),
-            Text(
-              taskName,
-              style: TextStyle(
-                color: _selectedTaskType == taskName
-                    ? Color(0xFFFFFFFF)
-                    : Color(0xFF8E8E8E),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget addStudySelector(String taskName, Color color) {
-    return GestureDetector(
-      onTap: () {
-        _selectedTaskType = taskName;
-        notifyListeners();
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(
-            Radius.circular(10),
-          ),
-          color: _selectedTaskType == taskName ? color : Color(0xFF),
-        ),
-        padding: const EdgeInsets.symmetric(
-          vertical: 10,
-          horizontal: 10,
-        ),
-        child: Row(
-          children: [
-            _selectedTaskType != taskName
-                ? CircleAvatar(
-                    backgroundColor: color,
-                    radius: 6,
-                  )
-                : SizedBox.shrink(),
-            _selectedTaskType != taskName
-                ? SizedBox(
-                    width: 8,
-                  )
-                : SizedBox.shrink(),
-            Text(
-              taskName,
-              style: TextStyle(
-                color: _selectedTaskType == taskName
-                    ? Color(0xFFFFFFFF)
-                    : Color(0xFF8E8E8E),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget addShoppingSelector(String taskName, Color color) {
-    return GestureDetector(
-      onTap: () {
-        _selectedTaskType = taskName;
-        notifyListeners();
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(
-            Radius.circular(10),
-          ),
-          color: _selectedTaskType == taskName ? color : Color(0xFF),
-        ),
-        padding: const EdgeInsets.symmetric(
-          vertical: 10,
-          horizontal: 10,
-        ),
-        child: Row(
-          children: [
-            _selectedTaskType != taskName
-                ? CircleAvatar(
-                    backgroundColor: color,
-                    radius: 6,
-                  )
-                : SizedBox.shrink(),
-            _selectedTaskType != taskName
-                ? SizedBox(
-                    width: 8,
-                  )
-                : SizedBox.shrink(),
-            Text(
-              taskName,
-              style: TextStyle(
-                color: _selectedTaskType == taskName
-                    ? Color(0xFFFFFFFF)
-                    : Color(0xFF8E8E8E),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget addPartySelector(String taskName, Color color) {
-    return GestureDetector(
-      onTap: () {
-        _selectedTaskType = taskName;
-        notifyListeners();
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(
-            Radius.circular(10),
-          ),
-          color: _selectedTaskType == taskName ? color : Color(0xFF),
-        ),
-        padding: const EdgeInsets.symmetric(
-          vertical: 10,
-          horizontal: 10,
-        ),
-        child: Row(
-          children: [
-            _selectedTaskType != taskName
-                ? CircleAvatar(
-                    backgroundColor: color,
-                    radius: 6,
-                  )
-                : SizedBox.shrink(),
-            _selectedTaskType != taskName
-                ? SizedBox(
-                    width: 8,
-                  )
-                : SizedBox.shrink(),
-            Text(
-              taskName,
-              style: TextStyle(
-                color: _selectedTaskType == taskName
-                    ? Color(0xFFFFFFFF)
-                    : Color(0xFF8E8E8E),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

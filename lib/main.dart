@@ -6,6 +6,7 @@ import 'package:Todo/home/homePage.dart';
 
 import 'db/databaseHelper.dart';
 import 'db/database.dart';
+import 'todoTasksGroup/taskGroupbyCategory.dart';
 
 void main() => runApp(MyTodoApp());
 
@@ -28,6 +29,7 @@ class MyTodoApp extends StatelessWidget {
         routes: {
           '/landing': (context) => LandingPage(),
           '/homepage': (context) => HomeTasksPage(),
+          '/tasktilepage': (context) => AllTasksTilesPage(),
         },
         debugShowCheckedModeBanner: false,
         key: _scaffoldKey,
