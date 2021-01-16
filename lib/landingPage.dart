@@ -53,7 +53,6 @@ class LandingPage extends StatelessWidget {
                   Navigator.pushReplacementNamed(context, '/homepage');
                 },
                 textColor: Colors.white,
-                color: Color(0xFF39AA02),
                 padding: EdgeInsets.all(0.0),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
@@ -61,8 +60,8 @@ class LandingPage extends StatelessWidget {
                   decoration: BoxDecoration(
                       gradient: LinearGradient(
                           colors: [
-                            Color(0xFF5DE61A),
-                            Color(0xFF39AA02),
+                            Color(0xFF7EB6FF),
+                            Color(0xFF5F87E7),
                           ],
                           begin: Alignment.centerLeft,
                           end: Alignment.centerRight),

@@ -11,7 +11,6 @@ class AllTasksTilesPage extends StatefulWidget {
 }
 
 class _AllTasksTilesPageState extends State<AllTasksTilesPage> {
-  // String _user = "Keyur Patel";
   var dbhelperProvider;
   String taskType;
   List<TodoTasksModel> list = new List();
@@ -34,7 +33,16 @@ class _AllTasksTilesPageState extends State<AllTasksTilesPage> {
   Widget buildCustomTiles() {
     return FutureBuilder(
       future: dbhelperProvider.fetchTasksByTypes(taskType),
-      builder: (_, __) {
+      builder: (_, AsyncSnapshot snapshot) {
+        if (snapshot.hasError) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text("Oops..! Some error has occured"),
+            ],
+          );
+        }
         list = dbhelperProvider.tasksbyTaskType;
         return list.length > 0
             ? Container(
@@ -44,7 +52,6 @@ class _AllTasksTilesPageState extends State<AllTasksTilesPage> {
                   right: 18,
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -80,8 +87,46 @@ class _AllTasksTilesPageState extends State<AllTasksTilesPage> {
                   ],
                 ),
               )
-            : SizedBox.shrink();
+            : emptyNotesforCategory();
       },
+    );
+  }
+
+  Widget emptyNotesforCategory() {
+    final String assetImage = "assets/images/taskimages/$taskType.png";
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(
+            assetImage,
+            width: MediaQuery.of(context).size.width * 0.70,
+          ),
+          SizedBox(
+            height: 70.3,
+          ),
+          Text(
+            'No ${taskType.toLowerCase()} tasks',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF554E8F),
+            ),
+          ),
+          SizedBox(
+            height: 11,
+          ),
+          Text(
+            'You do not have any ${taskType.toLowerCase()} task to do.',
+            style: TextStyle(
+              fontSize: 17,
+              color: Color(0xFF82A0B7),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

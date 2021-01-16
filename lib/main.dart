@@ -1,3 +1,4 @@
+import 'package:Todo/common/customAppbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,6 +24,9 @@ class MyTodoApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => DBHelper(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => ProfileImageProvider(),
+        )
       ],
       child: MaterialApp(
         initialRoute: '/',

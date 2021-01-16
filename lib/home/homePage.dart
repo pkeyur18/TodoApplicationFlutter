@@ -1,3 +1,4 @@
+import 'package:Todo/common/todayReminderTile.dart';
 import 'package:Todo/home/TaskPageDashboard.dart';
 import 'package:Todo/home/homePageDashboard.dart';
 import 'package:Todo/home/pendingPageDashboard.dart';
@@ -79,8 +80,12 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
         child: Scaffold(
           body: Container(
             child: Container(
-              child: tabs[selectedIndex],
-            ),
+                child: Column(
+              children: [
+                TodayReminder(),
+                tabs[selectedIndex],
+              ],
+            )),
           ),
           bottomNavigationBar: _customBottomBar(),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,

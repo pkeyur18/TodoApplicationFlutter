@@ -1,4 +1,3 @@
-import 'package:Todo/common/todayReminderTile.dart';
 import 'package:Todo/db/databaseHelper.dart';
 import 'package:Todo/todoTasksGroup/taskPageTiles.dart';
 import 'package:flutter/material.dart';
@@ -15,100 +14,89 @@ class _TaskPageDashboardState extends State<TaskPageDashboard> {
   @override
   Widget build(BuildContext context) {
     dbhelperProvider = Provider.of<DBHelper>(context);
-    return Column(
-      children: [
-        TodayReminder(),
-        FutureBuilder(
-          future: dbhelperProvider.todoTaskpageBuilder(),
-          builder: (context, snapshot) => Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                margin: EdgeInsets.only(
-                  top: 18,
-                  left: 18,
-                  right: 18,
-                ),
-                child: Column(
+    return FutureBuilder(
+      future: dbhelperProvider.todoTaskpageBuilder(),
+      builder: (context, snapshot) => Expanded(
+        child: SingleChildScrollView(
+          child: Container(
+            margin: EdgeInsets.only(
+              top: 18,
+              left: 18,
+              right: 18,
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Projects",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
-                            color: Color(0xFF8B87B3),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 18,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TaskTiles(
-                              "Personal",
-                              "${dbhelperProvider.personalCount} Tasks",
-                              _personalImageBuilder()),
-                          TaskTiles(
-                              "Work",
-                              "${dbhelperProvider.workCount} Tasks",
-                              _workImageBuilder()),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 18,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TaskTiles(
-                              "Meeting",
-                              "${dbhelperProvider.meetingCount} Tasks",
-                              _meetingImageBuilder()),
-                          TaskTiles(
-                              "Shopping",
-                              "${dbhelperProvider.shoppingCount} Tasks",
-                              _shoppingImageBuilder()),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 18,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TaskTiles(
-                              "Party",
-                              "${dbhelperProvider.partyCount} Tasks",
-                              _partyImageBuilder()),
-                          TaskTiles(
-                              "Study",
-                              "${dbhelperProvider.studyCount} Tasks",
-                              _studyImageBuilder()),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 18,
+                    Text(
+                      "Projects",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        color: Color(0xFF8B87B3),
                       ),
                     ),
                   ],
                 ),
-              ),
+                Container(
+                  margin: EdgeInsets.only(
+                    top: 18,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TaskTiles(
+                          "Personal",
+                          "${dbhelperProvider.personalCount} Tasks",
+                          _personalImageBuilder()),
+                      TaskTiles("Work", "${dbhelperProvider.workCount} Tasks",
+                          _workImageBuilder()),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(
+                    top: 18,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TaskTiles(
+                          "Meeting",
+                          "${dbhelperProvider.meetingCount} Tasks",
+                          _meetingImageBuilder()),
+                      TaskTiles(
+                          "Shopping",
+                          "${dbhelperProvider.shoppingCount} Tasks",
+                          _shoppingImageBuilder()),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(
+                    top: 18,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TaskTiles("Party", "${dbhelperProvider.partyCount} Tasks",
+                          _partyImageBuilder()),
+                      TaskTiles("Study", "${dbhelperProvider.studyCount} Tasks",
+                          _studyImageBuilder()),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(
+                    top: 18,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 

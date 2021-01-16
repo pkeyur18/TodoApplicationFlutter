@@ -36,14 +36,12 @@ class _TodayReminderState extends State<TodayReminder> {
             children: [
               dbhelperProvider.tasks.length > 0
                   ? CustomAppBar(
-                          "Hi " + _user,
-                          _subheading +
-                              "${dbhelperProvider.tasksCount} tasks remaining",
-                          _image)
-                      .build(context)
-                  : CustomAppBar("Hi " + _user,
-                          "You do not have any task yet.!", _image)
-                      .build(context),
+                      "Hi " + _user,
+                      _subheading +
+                          "${dbhelperProvider.tasksCount} tasks remaining",
+                      _image)
+                  : CustomAppBar(
+                      "Hi " + _user, "You do not have any task yet.!", _image),
               dbhelperProvider.latestTask != null
                   ? HomeNotification(
                       dbhelperProvider.latestTask, "Next Reminder")
