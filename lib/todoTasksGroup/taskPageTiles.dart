@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 
 class TaskTiles extends StatefulWidget {
   final String taskHeading;
   final String taskSubheading;
   final Widget taskImage;
+  final bool loading;
 
-  TaskTiles(this.taskHeading, this.taskSubheading, this.taskImage);
+  TaskTiles(
+      this.taskHeading, this.taskSubheading, this.taskImage, this.loading);
 
   @override
   _TaskTilesState createState() => _TaskTilesState();
@@ -59,13 +62,25 @@ class _TaskTilesState extends State<TaskTiles> {
             SizedBox(
               height: 10,
             ),
-            Text(
-              widget.taskSubheading,
-              style: TextStyle(
-                fontSize: 12,
-                color: Color(0xFFA1A1A1),
-              ),
-            ),
+            widget.loading
+                ? Shimmer.fromColors(
+                    child: Text(
+                      widget.taskSubheading,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFFA1A1A1),
+                      ),
+                    ),
+                    baseColor: Colors.grey.shade400,
+                    highlightColor: Colors.white,
+                  )
+                : Text(
+                    widget.taskSubheading,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFFA1A1A1),
+                    ),
+                  ),
           ],
         ),
       ),

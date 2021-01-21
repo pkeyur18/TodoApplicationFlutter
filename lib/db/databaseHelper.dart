@@ -1,5 +1,6 @@
 import 'package:Todo/db/database.dart';
 import 'package:Todo/model/my_tasks.dart';
+import 'package:Todo/model/userDetails.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -11,6 +12,8 @@ class DBHelper with ChangeNotifier {
   List<TodoTasksModel> _pastTasks = new List();
   List<TodoTasksModel> _tasksByTaskType = new List();
   TodoTasksModel _latestTask;
+
+  UserDetails _userDetails = new UserDetails();
 
   int _personalCount = 0;
   int _workCount = 0;
@@ -28,6 +31,7 @@ class DBHelper with ChangeNotifier {
   List<TodoTasksModel> get tasksbyTaskType => _tasksByTaskType;
 
   TodoTasksModel get latestTask => _latestTask;
+  UserDetails get userDetails => _userDetails;
 
   int get personalCount => _personalCount;
   int get meetingCount => _meetingCount;
@@ -38,11 +42,15 @@ class DBHelper with ChangeNotifier {
   int get tasksCount => _tasksCount;
 
   getAllTodotasks() async {
+    await Future.delayed(
+      Duration(
+        milliseconds: 300,
+      ),
+    );
     final db = await TodoDatabase.db.database;
     _todayTasks = [];
     _tomorrowTasks = [];
     _upcomingTasks = [];
-    _pastTasks = [];
 
     List<Map> results = await db.query(
       "Todolists",
@@ -62,9 +70,7 @@ class DBHelper with ChangeNotifier {
           _tomorrowTasks.add(taskModel);
         else {
           int pastIndex = _dateComparator(taskModel.todoStartDate);
-          if (pastIndex < 0) {
-            pastTasks.add(taskModel);
-          } else {
+          if (pastIndex > 0) {
             _upcomingTasks.add(taskModel);
           }
         }
@@ -80,6 +86,8 @@ class DBHelper with ChangeNotifier {
     _upcomingTasks.sort(
       (a, b) => a.todoStartDate.compareTo(b.todoStartDate),
     );
+
+    return _tasks;
   }
 
   todoTaskpageBuilder() async {
@@ -94,6 +102,11 @@ class DBHelper with ChangeNotifier {
     _partyCount = await TodoDatabase.db.getPartyTasksCount();
 
     _studyCount = await TodoDatabase.db.getStudyTasksCount();
+
+    await Future.delayed(
+      Duration(milliseconds: 300),
+    );
+    return _studyCount;
   }
 
   getLatestTask() async {
@@ -119,6 +132,7 @@ class DBHelper with ChangeNotifier {
       int index = _dateComparator(taskModel.todoStartDate);
       if (index == 0) _tasksCount = _tasksCount + 1;
     });
+    return _latestTask;
   }
 
   addNewTask(TodoTasksModel task) async {
@@ -182,6 +196,10 @@ class DBHelper with ChangeNotifier {
       TodoTasksModel model = TodoTasksModel.fromMap(element);
       _tasksByTaskType.add(model);
     });
+    await Future.delayed(
+      Duration(milliseconds: 300),
+    );
+    return _tasksByTaskType;
   }
 
   getAllPastTasks() async {
@@ -195,6 +213,10 @@ class DBHelper with ChangeNotifier {
       TodoTasksModel model = TodoTasksModel.fromMap(element);
       _pastTasks.add(model);
     });
+    await Future.delayed(
+      Duration(milliseconds: 300),
+    );
+    return _pastTasks;
   }
 
   updateTasksCompletedStatus(int id, bool data) async {
@@ -239,6 +261,13 @@ class DBHelper with ChangeNotifier {
           DateTime(date.year, date.month, date.day, time.hour, time.minute),
     );
     updateTask(tasksModel);
+  }
+
+  updateUsernameDetails(UserDetails userDetails) async {
+    final db = await TodoDatabase.db.database;
+    await db.rawUpdate(
+        "UPDATE Userdetails SET username = '${userDetails.userName}' WHERE id = ${userDetails.id}");
+    notifyListeners();
   }
 
   int _dateComparator(DateTime todoStartDate) {

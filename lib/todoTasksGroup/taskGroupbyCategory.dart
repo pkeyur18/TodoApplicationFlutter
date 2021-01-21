@@ -4,6 +4,7 @@ import 'package:Todo/todoTasksGroup/taskGroupbyCategoryTiles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:Todo/db/databaseHelper.dart';
+import 'package:shimmer/shimmer.dart';
 
 class AllTasksTilesPage extends StatefulWidget {
   @override
@@ -14,6 +15,14 @@ class _AllTasksTilesPageState extends State<AllTasksTilesPage> {
   var dbhelperProvider;
   String taskType;
   List<TodoTasksModel> list = new List();
+  TodoTasksModel dummy = new TodoTasksModel(
+    todoName: "dummy",
+    todoStartDate: DateTime.now(),
+    todoType: "Personal",
+    todoId: -1,
+    completed: false,
+    setReminder: false,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -42,52 +51,118 @@ class _AllTasksTilesPageState extends State<AllTasksTilesPage> {
               Text("Oops..! Some error has occured"),
             ],
           );
-        }
-        list = dbhelperProvider.tasksbyTaskType;
-        return list.length > 0
-            ? Container(
-                margin: EdgeInsets.only(
-                  top: 18,
-                  left: 18,
-                  right: 18,
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox.shrink(),
-                        Text(
-                          "$taskType tasks - " +
-                              dbhelperProvider.tasksbyTaskType.length
-                                  .toString(),
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12,
-                            color: Color(0xFF8B87B3),
+        } else if (snapshot.hasData) {
+          list = dbhelperProvider.tasksbyTaskType;
+          return list.length > 0
+              ? Container(
+                  margin: EdgeInsets.only(
+                    top: 18,
+                    left: 18,
+                    right: 18,
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox.shrink(),
+                          Text(
+                            "$taskType tasks - " +
+                                dbhelperProvider.tasksbyTaskType.length
+                                    .toString(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 12,
+                              color: Color(0xFF8B87B3),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: Column(
+                            children: [
+                              for (var item in list)
+                                TaskGroupbyCategoryTiles(item),
+                              SizedBox(
+                                height: 18,
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        child: Column(
-                          children: [
-                            for (var item in list)
-                              TaskGroupbyCategoryTiles(item),
-                            SizedBox(
-                              height: 18,
-                            ),
-                          ],
+                      ),
+                    ],
+                  ),
+                )
+              : emptyNotesforCategory();
+        } else {
+          return Container(
+            margin: EdgeInsets.only(
+              top: 18,
+              left: 18,
+              right: 18,
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox.shrink(),
+                    Shimmer.fromColors(
+                      baseColor: Color(0xFF8B87B3),
+                      highlightColor: Colors.white,
+                      child: Text(
+                        "$taskType tasks - Loading...",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12,
+                          color: Color(0xFF8B87B3),
                         ),
                       ),
                     ),
                   ],
                 ),
-              )
-            : emptyNotesforCategory();
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Column(
+                      children: [
+                        Shimmer.fromColors(
+                          child: TaskGroupbyCategoryTiles(dummy),
+                          baseColor: Colors.grey.shade200,
+                          highlightColor: Colors.white,
+                        ),
+                        Shimmer.fromColors(
+                          child: TaskGroupbyCategoryTiles(dummy),
+                          baseColor: Colors.grey.shade200,
+                          highlightColor: Colors.white,
+                        ),
+                        Shimmer.fromColors(
+                          child: TaskGroupbyCategoryTiles(dummy),
+                          baseColor: Colors.grey.shade200,
+                          highlightColor: Colors.white,
+                        ),
+                        Shimmer.fromColors(
+                          child: TaskGroupbyCategoryTiles(dummy),
+                          baseColor: Colors.grey.shade200,
+                          highlightColor: Colors.white,
+                        ),
+                        Shimmer.fromColors(
+                          child: TaskGroupbyCategoryTiles(dummy),
+                          baseColor: Colors.grey.shade200,
+                          highlightColor: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
       },
     );
   }

@@ -32,8 +32,11 @@ dependencies:
   path: ^1.7.0
   path_provider: ^1.6.27
   flutter_svg: 
-  image_picker: ^0.6.7+21
-
+  image_picker: 
+  skeleton_loader: 
+  font_awesome_flutter:
+  shimmer:
+  flutter_local_notifications:
 
 dev_dependencies:
   flutter_test:

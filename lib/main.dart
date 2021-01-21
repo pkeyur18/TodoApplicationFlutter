@@ -1,4 +1,5 @@
-import 'package:Todo/common/customAppbar.dart';
+import 'package:Todo/db/userdetailsDatabaseHelper.dart';
+import 'package:Todo/model/userDetails.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,6 +14,11 @@ void main() => runApp(MyTodoApp());
 
 class MyTodoApp extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  final UserDetails userDetails = new UserDetails(
+    id: 1,
+    profilePicture: null,
+    userName: null,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +31,14 @@ class MyTodoApp extends StatelessWidget {
           create: (context) => DBHelper(),
         ),
         ChangeNotifierProvider(
-          create: (context) => ProfileImageProvider(),
+          create: (context) => UserdetailsDBHelper(),
         )
       ],
       child: MaterialApp(
         initialRoute: '/',
         routes: {
           '/landing': (context) => LandingPage(),
-          '/homepage': (context) => HomeTasksPage(),
+          '/homepage': (context) => HomeTasksPage(userDetails),
           '/tasktilepage': (context) => AllTasksTilesPage(),
         },
         debugShowCheckedModeBanner: false,

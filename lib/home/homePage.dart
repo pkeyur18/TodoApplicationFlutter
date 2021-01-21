@@ -2,6 +2,7 @@ import 'package:Todo/common/todayReminderTile.dart';
 import 'package:Todo/home/TaskPageDashboard.dart';
 import 'package:Todo/home/homePageDashboard.dart';
 import 'package:Todo/home/pendingPageDashboard.dart';
+import 'package:Todo/model/userDetails.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,10 @@ import 'package:Todo/db/databaseHelper.dart';
 
 // ignore: must_be_immutable
 class HomeTasksPage extends StatefulWidget {
+  final UserDetails userDetails;
+
+  HomeTasksPage(this.userDetails);
+
   @override
   _HomeTasksPageState createState() => _HomeTasksPageState();
 }
@@ -79,14 +84,12 @@ class _HomeTasksPageState extends State<HomeTasksPage> {
       body: SafeArea(
         child: Scaffold(
           body: Container(
-            child: Container(
-                child: Column(
-              children: [
-                TodayReminder(),
-                tabs[selectedIndex],
-              ],
-            )),
-          ),
+              child: Column(
+            children: [
+              TodayReminder(widget.userDetails),
+              tabs[selectedIndex],
+            ],
+          )),
           bottomNavigationBar: _customBottomBar(),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           floatingActionButton: OpenBottomSheet(),

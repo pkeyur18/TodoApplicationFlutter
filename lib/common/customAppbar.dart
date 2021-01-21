@@ -1,30 +1,44 @@
 import 'dart:io';
+import 'package:Todo/db/databaseHelper.dart';
+import 'package:Todo/model/userDetails.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CustomAppBar extends StatefulWidget {
-  final String _username;
   final String _subHeading;
-  final String _imageUrl;
+  final UserDetails userDetails;
+  final bool loading;
 
-  CustomAppBar(this._username, this._subHeading, this._imageUrl);
+  CustomAppBar(
+    this.userDetails,
+    this._subHeading,
+    this.loading,
+  );
 
   @override
   _CustomAppBarState createState() => _CustomAppBarState();
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
-  var profilePictureProvider;
+  File newImage;
+  ImagePicker picker = new ImagePicker();
+  Directory directory;
+  String imagepath;
+  Future<File> tempImage;
+  var textController;
+  var dbhelper;
+
   @override
   Widget build(BuildContext context) {
-    profilePictureProvider = Provider.of<ProfileImageProvider>(context);
+    dbhelper = Provider.of<DBHelper>(context);
     return Container(
       margin: EdgeInsets.only(
         top: 20,
         bottom: 18,
-        left: 18,
+        left: 16,
         right: 18,
       ),
       child: Container(
@@ -32,108 +46,80 @@ class _CustomAppBarState extends State<CustomAppBar> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Provider.of<ProfileImageProvider>(
-                    context,
-                    listen: false,
-                  ).getImage(),
-                  child: FutureBuilder(
-                    future: profilePictureProvider.getFile(),
-                    builder: (context, snapshot) {
-                      return Container(
-                        child: profilePictureProvider.newImage == null
-                            ? CircleAvatar(
-                                backgroundColor: Color(0xFFD10263),
-                                child: Text("KP"),
-                                radius: 24.0,
-                              )
-                            : CircleAvatar(
-                                radius: 24.0,
-                                backgroundImage: Image.file(
-                                  snapshot.data,
-                                  fit: BoxFit.fill,
-                                ).image,
+            GestureDetector(
+              onTap: () => editUserDetails(),
+              child: Row(
+                children: [
+                  Container(
+                    child: widget.loading
+                        ? Shimmer.fromColors(
+                            child: CircleAvatar(
+                              backgroundColor: Color(0xFFABCDEF),
+                              radius: 22.0,
+                            ),
+                            baseColor: Color(0xFFABCDEF),
+                            highlightColor: Colors.white,
+                          )
+                        : CircleAvatar(
+                            backgroundColor: Color(0xFFABCDEF),
+                            child: Text(profilePictureName()),
+                            radius: 22.0,
+                          ),
+                  ),
+                  SizedBox(
+                    width: 8.0,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      widget.loading
+                          ? Shimmer.fromColors(
+                              child: Text(
+                                "Hi...",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFFF1F1F1),
+                                ),
                               ),
-                      );
-                    },
-                  ),
-                ),
-                SizedBox(
-                  width: 8.0,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      widget._username,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFFF1F1F1),
+                              baseColor: Colors.grey.shade200,
+                              highlightColor: Colors.white,
+                            )
+                          : Text(
+                              "Hi ${userName()}",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFFF1F1F1),
+                              ),
+                            ),
+                      SizedBox(
+                        height: 2,
                       ),
-                    ),
-                    SizedBox(
-                      height: 2,
-                    ),
-                    Text(
-                      widget._subHeading,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFFF1F1F1),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class CustomAppBarForPending extends StatelessWidget {
-  final String _username;
-  final String _imageUrl;
-
-  CustomAppBarForPending(this._username, this._imageUrl);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(
-        top: 20,
-        bottom: 18,
-        left: 18,
-        right: 18,
-      ),
-      child: Container(
-        height: 40,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  _username,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFFF1F1F1),
+                      widget.loading
+                          ? Shimmer.fromColors(
+                              child: Text(
+                                widget._subHeading,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFFF1F1F1),
+                                ),
+                              ),
+                              baseColor: Colors.grey.shade200,
+                              highlightColor: Colors.white,
+                            )
+                          : Text(
+                              widget._subHeading,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFFF1F1F1),
+                              ),
+                            ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-            Container(
-              child: CircleAvatar(
-                backgroundImage: AssetImage(_imageUrl),
-                radius: 20,
+                ],
               ),
             ),
           ],
@@ -141,36 +127,123 @@ class CustomAppBarForPending extends StatelessWidget {
       ),
     );
   }
-}
 
-class ProfileImageProvider with ChangeNotifier {
-  File newImage;
-  ImagePicker picker = new ImagePicker();
-  Directory directory;
-  String imagepath;
-
-  Future initializePath() async {
-    directory = await getApplicationDocumentsDirectory();
-    imagepath = directory.path;
-    print("initialize path");
-  }
-
-  getFile() async {
-    await initializePath();
-    newImage = File('$imagepath/profileimage.png');
-    return newImage;
-  }
-
-  Future getImage() async {
-    final pickedFile = await picker.getImage(
-      source: ImageSource.gallery,
-      imageQuality: 50,
+  void editUserDetails() async {
+    // profilePictureName();
+    textController = TextEditingController(
+      text: widget.userDetails.userName,
     );
+    return await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(12.0),
+            ),
+          ),
+          title: Text("Edit your name"),
+          content: Container(
+            width: MediaQuery.of(context).size.width * 0.80,
+            child: TextFormField(
+              controller: textController,
+              style: TextStyle(
+                fontSize: 15,
+              ),
+              autovalidateMode: AutovalidateMode.always,
+              validator: (value) {
+                if (value.length < 5) {
+                  return "Your name should contain atleast 5 characters";
+                }
+                return null;
+              },
+              keyboardType: TextInputType.text,
+              cursorColor: Theme.of(context).cursorColor,
+              maxLength: 24,
+              decoration: InputDecoration(
+                labelText: 'Enter your name',
+                hintText: 'Kristen...',
+                labelStyle: TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFF554E8F),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Color(0xFF554E8F),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text(
+                "Discard",
+                style: TextStyle(
+                  color: Colors.green,
+                ),
+              ),
+            ),
+            FlatButton(
+              onPressed: () {
+                if (textController.text.length >= 5) {
+                  UserDetails user = new UserDetails(
+                    id: widget.userDetails.id,
+                    userName: textController.text,
+                    profilePicture: widget.userDetails.profilePicture,
+                  );
+                  setState(() {
+                    widget.userDetails.userName = textController.text;
+                  });
+                  dbhelper.updateUsernameDetails(user);
+                  Navigator.of(context).pop(true);
+                } else {}
+              },
+              child: const Text(
+                "Apply",
+                style: TextStyle(
+                  color: Colors.green,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-    if (pickedFile != null) {
-      newImage =
-          await File(pickedFile.path).copy('$imagepath/profileimage.png');
+  String userName() {
+    if (widget.userDetails != null) {
+      if (widget.userDetails.userName != null) {
+        String tempName = widget.userDetails.userName;
+        tempName = tempName.replaceAll(new RegExp(r"\s+\b|\b\s"), " ");
+        return tempName;
+      }
     }
-    notifyListeners();
+    return '';
+  }
+
+  String profilePictureName() {
+    if (widget.userDetails != null) {
+      if (widget.userDetails.userName != null) {
+        String tempName = widget.userDetails.userName;
+        tempName = tempName.replaceAll(new RegExp(r"\s+\b|\b\s"), " ");
+        List<String> name = tempName.split(" ");
+        if (name.length > 2) {
+          List<String> tempList = name;
+          name = new List();
+          for (var i = 0; i < 2; i++) {
+            name.add(tempList[i]);
+          }
+        }
+        String profileName = '';
+        name.forEach((element) {
+          profileName = profileName + element.substring(0, 1);
+        });
+        return profileName;
+      }
+    }
+    return 'HI';
   }
 }

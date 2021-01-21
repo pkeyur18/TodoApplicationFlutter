@@ -31,83 +31,97 @@ class TodoDatabase with ChangeNotifier {
           "completed INTEGER,"
           "todostartdate TEXT"
           ")");
+      await db.execute("CREATE TABLE Userdetails ("
+          "id INTEGER PRIMARY KEY,"
+          "username TEXT,"
+          "profilepicture BLOB"
+          ")");
+
       await db.execute(
-        "INSERT INTO Todolists ('id', 'todotype', 'todoname', 'setreminder', 'completed', 'todostartdate') values (?, ?, ?, ?, ?, ?)",
+        "INSERT INTO Userdetails ('id', 'username', 'profilepicture') VALUES (?, ?, ?)",
         [
           1,
-          "Personal",
-          "Go jogging with Christin",
-          1,
-          0,
-          DateTime(2021, 01, 10, 07, 00).toString()
+          null,
+          null,
         ],
       );
-      await db.execute(
-        "INSERT INTO Todolists ('id', 'todotype', 'todoname', 'setreminder', 'completed', 'todostartdate') values (?, ?, ?, ?, ?, ?)",
-        [
-          2,
-          "Work",
-          "Send project file",
-          1,
-          0,
-          DateTime(2021, 01, 10, 10, 00).toString()
-        ],
-      );
-      await db.execute(
-        "INSERT INTO Todolists ('id', 'todotype', 'todoname', 'setreminder', 'completed', 'todostartdate') values (?, ?, ?, ?, ?, ?)",
-        [
-          3,
-          "Meeting",
-          "Meeting with client",
-          1,
-          1,
-          DateTime(2021, 01, 10, 15, 00).toString()
-        ],
-      );
-      await db.execute(
-        "INSERT INTO Todolists ('id', 'todotype', 'todoname', 'setreminder', 'completed', 'todostartdate') values (?, ?, ?, ?, ?, ?)",
-        [
-          4,
-          "Work",
-          "Email client",
-          1,
-          1,
-          DateTime(2021, 01, 11, 10, 00).toString()
-        ],
-      );
-      await db.execute(
-        "INSERT INTO Todolists ('id', 'todotype', 'todoname', 'setreminder', 'completed', 'todostartdate') values (?, ?, ?, ?, ?, ?)",
-        [
-          5,
-          "Personal",
-          "Morning yoga",
-          1,
-          1,
-          DateTime(2021, 01, 11, 07, 00).toString()
-        ],
-      );
-      await db.execute(
-        "INSERT INTO Todolists ('id', 'todotype', 'todoname', 'setreminder', 'completed', 'todostartdate') values (?, ?, ?, ?, ?, ?)",
-        [
-          6,
-          "Work",
-          "Send project file",
-          1,
-          1,
-          DateTime(2021, 01, 12, 10, 00).toString()
-        ],
-      );
-      await db.execute(
-        "INSERT INTO Todolists ('id', 'todotype', 'todoname', 'setreminder', 'completed', 'todostartdate') values (?, ?, ?, ?, ?, ?)",
-        [
-          7,
-          "Meeting",
-          "Meeting with client",
-          1,
-          1,
-          DateTime(2021, 01, 13, 15, 00).toString()
-        ],
-      );
+      // await db.execute(
+      //   "INSERT INTO Todolists ('id', 'todotype', 'todoname', 'setreminder', 'completed', 'todostartdate') values (?, ?, ?, ?, ?, ?)",
+      //   [
+      //     1,
+      //     "Personal",
+      //     "Go jogging with Christin",
+      //     1,
+      //     0,
+      //     DateTime(2021, 01, 10, 07, 00).toString()
+      //   ],
+      // );
+      // await db.execute(
+      //   "INSERT INTO Todolists ('id', 'todotype', 'todoname', 'setreminder', 'completed', 'todostartdate') values (?, ?, ?, ?, ?, ?)",
+      //   [
+      //     2,
+      //     "Work",
+      //     "Send project file",
+      //     1,
+      //     0,
+      //     DateTime(2021, 01, 10, 10, 00).toString()
+      //   ],
+      // );
+      // await db.execute(
+      //   "INSERT INTO Todolists ('id', 'todotype', 'todoname', 'setreminder', 'completed', 'todostartdate') values (?, ?, ?, ?, ?, ?)",
+      //   [
+      //     3,
+      //     "Meeting",
+      //     "Meeting with client",
+      //     1,
+      //     1,
+      //     DateTime(2021, 01, 10, 15, 00).toString()
+      //   ],
+      // );
+      // await db.execute(
+      //   "INSERT INTO Todolists ('id', 'todotype', 'todoname', 'setreminder', 'completed', 'todostartdate') values (?, ?, ?, ?, ?, ?)",
+      //   [
+      //     4,
+      //     "Work",
+      //     "Email client",
+      //     1,
+      //     1,
+      //     DateTime(2021, 01, 11, 10, 00).toString()
+      //   ],
+      // );
+      // await db.execute(
+      //   "INSERT INTO Todolists ('id', 'todotype', 'todoname', 'setreminder', 'completed', 'todostartdate') values (?, ?, ?, ?, ?, ?)",
+      //   [
+      //     5,
+      //     "Personal",
+      //     "Morning yoga",
+      //     1,
+      //     1,
+      //     DateTime(2021, 01, 11, 07, 00).toString()
+      //   ],
+      // );
+      // await db.execute(
+      //   "INSERT INTO Todolists ('id', 'todotype', 'todoname', 'setreminder', 'completed', 'todostartdate') values (?, ?, ?, ?, ?, ?)",
+      //   [
+      //     6,
+      //     "Work",
+      //     "Send project file",
+      //     1,
+      //     1,
+      //     DateTime(2021, 01, 12, 10, 00).toString()
+      //   ],
+      // );
+      // await db.execute(
+      //   "INSERT INTO Todolists ('id', 'todotype', 'todoname', 'setreminder', 'completed', 'todostartdate') values (?, ?, ?, ?, ?, ?)",
+      //   [
+      //     7,
+      //     "Meeting",
+      //     "Meeting with client",
+      //     1,
+      //     1,
+      //     DateTime(2021, 01, 13, 15, 00).toString()
+      //   ],
+      // );
     });
   }
 

@@ -1,14 +1,16 @@
 import 'package:Todo/model/my_tasks.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 
 // ignore: must_be_immutable
 class HomeNotification extends StatefulWidget {
   final TodoTasksModel todoTask;
   final String todoNotification;
   bool showNotification = true;
+  final bool loading;
 
-  HomeNotification(this.todoTask, this.todoNotification);
+  HomeNotification(this.todoTask, this.todoNotification, this.loading);
   @override
   _HomeNotificationState createState() => _HomeNotificationState();
 }
@@ -72,20 +74,38 @@ class _HomeNotificationState extends State<HomeNotification> {
                                 Container(
                                   width:
                                       MediaQuery.of(context).size.width * 0.54,
-                                  child: Text(
-                                    widget.todoTask.todoName,
-                                    style: _subHeadingStyles,
-                                    overflow: TextOverflow.clip,
-                                    softWrap: true,
-                                  ),
+                                  child: widget.loading
+                                      ? Shimmer.fromColors(
+                                          child: Text(
+                                            "Loading...",
+                                            style: _subHeadingStyles,
+                                          ),
+                                          baseColor: Colors.grey.shade200,
+                                          highlightColor: Colors.white,
+                                        )
+                                      : Text(
+                                          widget.todoTask.todoName,
+                                          style: _subHeadingStyles,
+                                          overflow: TextOverflow.clip,
+                                          softWrap: true,
+                                        ),
                                 ),
                                 SizedBox(
                                   height: 5,
                                 ),
-                                Text(
-                                  _dateFormatter(),
-                                  style: _subHeadingStyles,
-                                ),
+                                widget.loading
+                                    ? Shimmer.fromColors(
+                                        child: Text(
+                                          "Loading...",
+                                          style: _subHeadingStyles,
+                                        ),
+                                        baseColor: Colors.grey.shade200,
+                                        highlightColor: Colors.white,
+                                      )
+                                    : Text(
+                                        _dateFormatter(),
+                                        style: _subHeadingStyles,
+                                      ),
                               ],
                             ),
                           ),

@@ -25,7 +25,7 @@ class _CustomTodoTileState extends State<CustomTodoTile> {
   var dbhelperProvider;
   @override
   Widget build(BuildContext context) {
-    dbhelperProvider = Provider.of<DBHelper>(context);
+    dbhelperProvider = Provider.of<DBHelper>(context, listen: false);
     return Container(
       margin: EdgeInsets.only(
         top: 14,
