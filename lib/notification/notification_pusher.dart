@@ -1,33 +1,34 @@
-import 'package:flutter/material.dart';
+import 'package:Todo/model/my_tasks.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
 class PushNotification {
-  Future<void> showNotificationMediaStyle() async {
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'media channel id',
-      'media channel name',
-      'media channel description',
-      color: Colors.red,
-      enableLights: true,
+  Future<void> showNotification() async {
+    var android = new AndroidNotificationDetails(
+      'id',
+      'channel ',
+      'description',
+      priority: Priority.high,
+      importance: Importance.max,
+      icon: '@mipmap/ic_launcher',
       largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
-      styleInformation: MediaStyleInformation(),
     );
-    var platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-      iOS: null,
-    );
+    // var iOS = new IOSNotificationDetails();
+    var platform = new NotificationDetails(android: android, iOS: null);
     await flutterLocalNotificationsPlugin.show(
-        0, 'notification title', 'notification body', platformChannelSpecifics);
+        1, 'Flutter devs', 'Flutter Local Notification Demo', platform,
+        payload: 'Welcome to the Local Notification demo ');
   }
 
-  Future<void> scheduleNotification() async {
+  Future<void> scheduleNotification(TodoTasksModel tasksModel) async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'channel id',
       'channel name',
       'channel description',
+      priority: Priority.max,
+      importance: Importance.max,
       icon: '@mipmap/ic_launcher',
       largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
     );
@@ -36,13 +37,17 @@ class PushNotification {
         android: androidPlatformChannelSpecifics,
         iOS: iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.schedule(
-      0,
-      'scheduled title',
-      'scheduled body',
-      DateTime.now().add(Duration(seconds: 15)),
+      tasksModel.todoId,
+      tasksModel.todoType,
+      tasksModel.todoName,
+      tasksModel.todoStartDate,
       platformChannelSpecifics,
       androidAllowWhileIdle: true,
       payload: "Welcome to the Local Notification demo",
     );
+  }
+
+  Future<void> cancelNotification(int id) async {
+    await flutterLocalNotificationsPlugin.cancel(id);
   }
 }

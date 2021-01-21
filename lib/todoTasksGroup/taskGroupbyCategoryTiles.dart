@@ -128,7 +128,10 @@ class _TaskGroupbyCategoryTilesState extends State<TaskGroupbyCategoryTiles> {
                   GestureDetector(
                     onTap: () {
                       dbhelperProvider.updateTasksCompletedStatus(
-                          widget.data.todoId, !widget.data.completed);
+                        widget.data.todoId,
+                        !widget.data.completed,
+                        widget.data,
+                      );
                     },
                     child: Row(
                       children: [
@@ -161,7 +164,10 @@ class _TaskGroupbyCategoryTilesState extends State<TaskGroupbyCategoryTiles> {
                           child: GestureDetector(
                             onTap: () {
                               dbhelperProvider.updateTasksCompletedStatus(
-                                  widget.data.todoId, !widget.data.completed);
+                                widget.data.todoId,
+                                !widget.data.completed,
+                                widget.data,
+                              );
                             },
                             child: Icon(
                               widget.data.completed
@@ -237,7 +243,10 @@ class _TaskGroupbyCategoryTilesState extends State<TaskGroupbyCategoryTiles> {
                     child: GestureDetector(
                       onTap: () {
                         dbhelperProvider.updateTasksReminderStatus(
-                            widget.data.todoId, !widget.data.setReminder);
+                          widget.data.todoId,
+                          !widget.data.setReminder,
+                          widget.data,
+                        );
                       },
                       child: Icon(
                         Icons.notifications,

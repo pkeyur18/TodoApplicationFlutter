@@ -13,7 +13,6 @@ import 'todoTasksGroup/taskGroupbyCategory.dart';
 void main() => runApp(MyTodoApp());
 
 class MyTodoApp extends StatelessWidget {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   final UserDetails userDetails = new UserDetails(
     id: 1,
     profilePicture: null,
@@ -42,7 +41,6 @@ class MyTodoApp extends StatelessWidget {
           '/tasktilepage': (context) => AllTasksTilesPage(),
         },
         debugShowCheckedModeBanner: false,
-        key: _scaffoldKey,
         title: 'Todo',
         home: LandingPage(),
       ),

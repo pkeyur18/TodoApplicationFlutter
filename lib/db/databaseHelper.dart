@@ -1,6 +1,7 @@
 import 'package:Todo/db/database.dart';
 import 'package:Todo/model/my_tasks.dart';
 import 'package:Todo/model/userDetails.dart';
+import 'package:Todo/notification/notification_pusher.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -143,7 +144,10 @@ class DBHelper with ChangeNotifier {
     int setReminder = task.setReminder ? 0 : 1;
     int completed = task.completed ? 0 : 1;
     String todoStartdate = task.todoStartDate.toString();
-    var id = maxId.first['last_id'];
+    int id = maxId.first['last_id'];
+    if (id == null) {
+      id = 1;
+    }
     await db.rawInsert(
       "INSERT INTO Todolists (id, todotype, todoname, setreminder, completed, todostartdate)"
       "VALUES (?, ?, ?, ?, ?, ?)",
@@ -156,6 +160,10 @@ class DBHelper with ChangeNotifier {
         todoStartdate,
       ],
     );
+    task.todoId = id;
+    if (task.setReminder) {
+      PushNotification().scheduleNotification(task);
+    }
     notifyListeners();
   }
 
@@ -174,6 +182,7 @@ class DBHelper with ChangeNotifier {
 
   deleteTask(TodoTasksModel task) async {
     final db = await TodoDatabase.db.database;
+    PushNotification().cancelNotification(task.todoId);
     db.delete(
       "Todolists",
       where: "id = ?",
@@ -219,19 +228,32 @@ class DBHelper with ChangeNotifier {
     return _pastTasks;
   }
 
-  updateTasksCompletedStatus(int id, bool data) async {
+  updateTasksCompletedStatus(
+      int id, bool data, TodoTasksModel tasksModel) async {
     final db = await TodoDatabase.db.database;
     int index = data ? 0 : 1;
     await db
         .rawUpdate("UPDATE Todolists SET completed = $index WHERE id = $id");
+
+    if (data) {
+      PushNotification().cancelNotification(id);
+    } else {
+      PushNotification().scheduleNotification(tasksModel);
+    }
     notifyListeners();
   }
 
-  updateTasksReminderStatus(int id, bool data) async {
+  updateTasksReminderStatus(
+      int id, bool data, TodoTasksModel tasksModel) async {
     final db = await TodoDatabase.db.database;
     int index = data ? 0 : 1;
     await db
         .rawUpdate("UPDATE Todolists SET setreminder = $index WHERE id = $id");
+    if (data) {
+      PushNotification().scheduleNotification(tasksModel);
+    } else {
+      PushNotification().cancelNotification(tasksModel.todoId);
+    }
     notifyListeners();
   }
 
@@ -246,6 +268,9 @@ class DBHelper with ChangeNotifier {
       where: "id = ?",
       whereArgs: [tasksModel.todoId],
     );
+    if (tasksModel.setReminder) {
+      PushNotification().scheduleNotification(tasksModel);
+    }
     notifyListeners();
   }
 

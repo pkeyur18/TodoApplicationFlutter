@@ -1,5 +1,5 @@
 import 'package:Todo/db/databaseHelper.dart';
-import 'package:Todo/todoTasksGroup/taskEditPage.dart';
+import 'package:Todo/bottomsheet/taskEditPage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -129,7 +129,10 @@ class _UpcomingTodoTileState extends State<UpcomingTodoTile> {
                   GestureDetector(
                     onTap: () {
                       dbhelperProvider.updateTasksCompletedStatus(
-                          widget.data.todoId, !widget.data.completed);
+                        widget.data.todoId,
+                        !widget.data.completed,
+                        widget.data,
+                      );
                     },
                     child: Row(
                       children: [
@@ -162,7 +165,10 @@ class _UpcomingTodoTileState extends State<UpcomingTodoTile> {
                           child: GestureDetector(
                             onTap: () {
                               dbhelperProvider.updateTasksCompletedStatus(
-                                  widget.data.todoId, !widget.data.completed);
+                                widget.data.todoId,
+                                !widget.data.completed,
+                                widget.data,
+                              );
                             },
                             child: Icon(
                               widget.data.completed
@@ -235,7 +241,10 @@ class _UpcomingTodoTileState extends State<UpcomingTodoTile> {
                     child: GestureDetector(
                       onTap: () {
                         dbhelperProvider.updateTasksReminderStatus(
-                            widget.data.todoId, !widget.data.setReminder);
+                          widget.data.todoId,
+                          !widget.data.setReminder,
+                          widget.data,
+                        );
                       },
                       child: Icon(
                         Icons.notifications,

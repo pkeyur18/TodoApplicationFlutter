@@ -1,5 +1,5 @@
-import 'package:Todo/common/customAppbar.dart';
-import 'package:Todo/common/homeNotification.dart';
+import 'package:Todo/appbar/customAppbar.dart';
+import 'package:Todo/appbar/homeNotification.dart';
 import 'package:Todo/db/databaseHelper.dart';
 import 'package:Todo/model/my_tasks.dart';
 import 'package:Todo/model/userDetails.dart';
@@ -70,31 +70,6 @@ class _TodayReminderState extends State<TodayReminder> {
             ),
           );
         }
-        // else {
-        //   return Container(
-        //     decoration: BoxDecoration(
-        //       gradient: LinearGradient(
-        //         begin: Alignment.bottomRight,
-        //         end: Alignment.topLeft,
-        //         colors: <Color>[
-        //           Color(0xFF81C7F5),
-        //           Color(0xFF3867D5),
-        //         ],
-        //       ),
-        //     ),
-        //     child: Container(
-        //       child: Column(
-        //         children: [
-        //           CustomAppBar(
-        //             dummyUser,
-        //             "Loading...",
-        //             true,
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //   );
-        // }
       },
     );
   }

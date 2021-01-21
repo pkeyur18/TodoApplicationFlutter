@@ -152,8 +152,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
               autovalidateMode: AutovalidateMode.always,
               validator: (value) {
-                if (value.length < 5) {
-                  return "Your name should contain atleast 5 characters";
+                if (value.length < 1) {
+                  return "Please enter atleast 1 character";
                 }
                 return null;
               },
@@ -187,7 +187,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
             ),
             FlatButton(
               onPressed: () {
-                if (textController.text.length >= 5) {
+                if (textController.text.length >= 1) {
                   UserDetails user = new UserDetails(
                     id: widget.userDetails.id,
                     userName: textController.text,
@@ -216,7 +216,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   String userName() {
     if (widget.userDetails != null) {
       if (widget.userDetails.userName != null) {
-        String tempName = widget.userDetails.userName;
+        String tempName = widget.userDetails.userName.trim();
         tempName = tempName.replaceAll(new RegExp(r"\s+\b|\b\s"), " ");
         return tempName;
       }
@@ -227,7 +227,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   String profilePictureName() {
     if (widget.userDetails != null) {
       if (widget.userDetails.userName != null) {
-        String tempName = widget.userDetails.userName;
+        String tempName = widget.userDetails.userName.trim();
         tempName = tempName.replaceAll(new RegExp(r"\s+\b|\b\s"), " ");
         List<String> name = tempName.split(" ");
         if (name.length > 2) {
