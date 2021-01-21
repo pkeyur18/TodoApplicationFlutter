@@ -129,7 +129,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
   }
 
   void editUserDetails() async {
-    // profilePictureName();
     textController = TextEditingController(
       text: widget.userDetails.userName,
     );
